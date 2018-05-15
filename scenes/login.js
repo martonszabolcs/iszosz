@@ -59,7 +59,7 @@ export default class Login extends Component<{}> {
     var path = "https://dry-mountain-15425.herokuapp.com/auth";
 
      fetch(path, {  
- headers: new Headers({
+  headers: new Headers({
      'Authorization': data, 
      'Content-Type': 'application/x-www-form-urlencoded'
    }), 
