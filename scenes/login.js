@@ -46,10 +46,26 @@ export default class Login extends Component<{}> {
       text:'',
       password:'',
       email:'',
+      token:'',
+      user:[],
       fadeAnim: new Animated.Value(0),
 
       }
     }
+    async setItem(responseData) {
+    var value = {
+      user: this.state.user,
+      token: this.state.token
+    }
+    try {
+        console.log(value);
+        return await AsyncStorage.setItem('user', JSON.stringify(value));
+    } catch (error) {
+        console.error('AsyncStorage#setItem error: ' + error.message);
+    }
+  }
+
+
 
     login = async () => {
       var data = "Basic "+base64.encode("minden@gm.com:123456");
@@ -76,8 +92,15 @@ export default class Login extends Component<{}> {
       console.log('responseData');
       console.log(responseData);
 
+      this.setState({
+        token: responseData.token,
+        user: responseData.user
+      })
+
+      this.setItem();
 
       Actions.home({
+        user: responseData.user,
         userName: responseData.user.name,
         token: responseData.token
       });
@@ -107,6 +130,8 @@ export default class Login extends Component<{}> {
         duration: 5000,              // Make it take a while
       }
     ).start();                        // Starts the animation
+
+
   }
 
 

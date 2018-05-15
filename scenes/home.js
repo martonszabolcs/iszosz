@@ -82,9 +82,27 @@ handleSwipeIndexChange (index) {
         lista: lista
       })
     })
-      
-   
+      this.getItem();
     }
+
+    async getItem() {
+      try {
+  const value = await AsyncStorage.getItem('user');
+  if (value !== null){
+    this.setState({
+      userName: result.user.name
+    })
+    console.log(value);
+  }
+} catch (error) {
+                    console.error('AsyncStorage#getItem error deserializing JSON for key: ' + 'user', e.message);
+  // Error retrieving data
+}
+}
+
+
+
+
 
 
 
