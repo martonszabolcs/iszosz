@@ -194,7 +194,7 @@ export default class Login extends Component<{}> {
                 secureTextEntry={false}
                 underlineColorAndroid='rgba(0,0,0,0)'
                 style={{height: 40}}
-                onChangeText={(password) => this.setState({email})}
+                onChangeText={(email) => this.setState({email})}
                 value={this.state.email}/>
           <View style={{height:1, paddingTop:0.3, backgroundColor:'gray', top:-10}}/> 
             </View>

@@ -88,14 +88,15 @@ handleSwipeIndexChange (index) {
     async getItem() {
       try {
   const value = await AsyncStorage.getItem('user');
+  console.log(value)
   if (value !== null){
     this.setState({
-      userName: result.user.name
+      userName: value.user.name,
     })
-    console.log(value);
+    console.log(this.state.userName);
   }
 } catch (error) {
-                    console.error('AsyncStorage#getItem error deserializing JSON for key: ' + 'user', e.message);
+                    console.error('AsyncStorage#getItem error deserializing JSON for key: ' + 'user');
   // Error retrieving data
 }
 }

@@ -51,7 +51,6 @@ export default class Sidebar extends Component<{}> {
 
 
   render() {
-    console.log(this.state.results)
     var {height, width} = Dimensions.get('window');
     var iWidth = width/240
     var cornerLeft = width - 10;  // 10 is the width/height of the corner
