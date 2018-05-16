@@ -30,6 +30,8 @@ import {
   Actions
 } from 'react-native-router-flux';
 import api from '../utilities/api'
+import * as Keychain from 'react-native-keychain';
+
 
 
 
@@ -82,26 +84,26 @@ handleSwipeIndexChange (index) {
         lista: lista
       })
     })
-      this.getItem();
     }
 
-    async getItem() {
-      try {
-  const value = await AsyncStorage.getItem('user');
-  console.log(value)
-  if (value !== null){
-    this.setState({
-      userName: value.user.name,
-    })
-    console.log(this.state.userName);
+    async getItem () {
+
+  try {
+    // Retreive the credentials
+    const credentials = await Keychain.getGenericPassword();
+    if (credentials) {
+      this.setState({
+        userName: credentials.username,
+        token: credentials.password
+      })
+      console.log(this.state.userName)
+    } else {
+      console.log('No credentials stored')
+    }
+  } catch (error) {
+    console.log('Keychain couldn\'t be accessed!', error);
   }
-} catch (error) {
-                    console.error('AsyncStorage#getItem error deserializing JSON for key: ' + 'user');
-  // Error retrieving data
 }
-}
-
-
 
 
 
@@ -114,6 +116,8 @@ handleSwipeIndexChange (index) {
        if (this.state.canavasOpen === 1){
         this.props.handleMenu();
       }
+      this.getItem();
+
         
     }
     _handleResults(results) {

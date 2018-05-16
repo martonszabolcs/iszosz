@@ -3,6 +3,7 @@ package com.eterkep;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.reactnativecomponent.splashscreen.RCTSplashScreenPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
@@ -26,6 +27,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new KeychainPackage(),
             new VectorIconsPackage(),
             new RCTSplashScreenPackage(),
             new RNFetchBlobPackage()

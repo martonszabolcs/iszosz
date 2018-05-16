@@ -56,68 +56,6 @@ export default class Login extends Component<{}> {
       }
     }
 
-    async setItem () {
-  const username = this.state.user.name;
-  const password = this.state.token;
-
-  // Store the credentials
-  await Keychain.setGenericPassword(username, password);
-}
-
-    login = async () => {
-      var data = "Basic "+base64.encode("minden@gm.com:123456");
-
-      console.log(data)
-
-    var path = "https://dry-mountain-15425.herokuapp.com/auth";
-
-     fetch(path, {  
-  headers: new Headers({
-     'Authorization': data, 
-     'Content-Type': 'application/x-www-form-urlencoded'
-   }), 
-  method: 'POST',
-  
- body: "access_token=e0cAiR20cMQMpSpV1z1DCuLFS3HcArbx",
-
-
-})
-      .then((response) => response.json())
-      .then((responseData) => {
-
-
-      console.log('responseData');
-      console.log(responseData);
-
-      this.setState({
-        token: responseData.token,
-        user: responseData.user
-      })
-
-      this.setItem();
-
-      Actions.home({
-        user: responseData.user,
-        userName: responseData.user.name,
-        token: responseData.token
-      });
-     
-
-      
-
- 
-    })
-      .catch((error) => {
-      console.log(error)
-      Alert.alert(
-  'Hiba történt!',
-  'Kérjük próbálkozzon újra',
-    )
-    })
-  }
-
-  
-
 
     componentDidMount() {
     Animated.timing(                  // Animate over time
@@ -132,14 +70,9 @@ export default class Login extends Component<{}> {
   }
 
 
-
-       componentWillMount() {
-        
-    }
-
     validate(){
-      if (this.state.password === '12345'){
-        Actions.home()
+      if (this.state.password === '1'){
+        Actions.regDone()
         this.setState({password:''})
       } else {
         Alert.alert('Hibás jelszó', 'Kérjük, próbálja újra!')
@@ -173,7 +106,7 @@ export default class Login extends Component<{}> {
 
 
         <View style={{alignItems:'center', justifyContent:'center', marginTop:30 }}>
-          <Image source={require('../src/man.png')} style={{width:height/3, height:height/3}}/>
+          <Image source={require('../src/iszosz.png')} style={{width:width-100, height:height/3}}/>
         </View>
 
 
@@ -183,7 +116,7 @@ export default class Login extends Component<{}> {
           <View>
             <View>
               <Text style={{fontSize:12, color:'gray'}}>
-                {'E-mail'}
+                {'Regisztrációs kód'}
               </Text>
               <TextInput
                 ref='SecondInput'
@@ -191,36 +124,14 @@ export default class Login extends Component<{}> {
                 secureTextEntry={false}
                 underlineColorAndroid='rgba(0,0,0,0)'
                 style={{height: 40}}
-                onChangeText={(email) => this.setState({email})}
-                value={this.state.email}/>
-          <View style={{height:1, paddingTop:0.3, backgroundColor:'gray', top:-10}}/> 
-            </View>
-            <View>
-              <Text style={{fontSize:12, color:'gray'}}>
-                {'Jelszó'}
-              </Text>
-              <TextInput
-                ref='SecondInput'
-                returnKeyType='go'
-                secureTextEntry={true}
-                underlineColorAndroid='rgba(0,0,0,0)'
-                style={{height: 40}}
                 onChangeText={(password) => this.setState({password})}
                 value={this.state.password}/>
           <View style={{height:1, paddingTop:0.3, backgroundColor:'gray', top:-10}}/> 
             </View>
         </View>
-        
-        <View style={{justifyContent:'center', alignItems:'center', marginTop:10}}>
-          <TouchableOpacity onPress={ () => this.login() }>
-            <View style={{height:40, backgroundColor:'#2E348B', width:width-40, justifyContent:'center', alignItems:'center', borderRadius:20}}>
-              <Text style={{color:'white'}}>{'Bejelentkezés'}</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
 
         <View style={{justifyContent:'center', alignItems:'center', marginTop:10}}>
-          <TouchableOpacity onPress={ () => Actions.reg() }>
+          <TouchableOpacity onPress={ () => this.validate() }>
             <View style={{height:40, backgroundColor:'white', width:width-40, justifyContent:'center', alignItems:'center', borderRadius:20}}>
               <Text style={{color:'#2E348B'}}>{'Regisztráció'}</Text>
             </View>
