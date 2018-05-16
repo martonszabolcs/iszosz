@@ -50,6 +50,7 @@ export default class Login extends Component<{}> {
       human: "",
       service: "",
       description: "",
+      petName: "pet",
       selectedItems: []
     };
   }
@@ -57,8 +58,6 @@ export default class Login extends Component<{}> {
   reg = async () => {
     let data = {
       method: "POST",
-      credentials: "same-origin",
-      mode: "same-origin",
       body: JSON.stringify({
         password: this.state.password,
         email: this.state.email,
@@ -73,7 +72,8 @@ export default class Login extends Component<{}> {
         human: this.state.human,
         service: this.state.service,
         description: this.state.description,
-        keywords: this.state.selectedItems
+        keywords: this.state.selectedItems,
+        petName: this.state.petName
       }),
       headers: {
         Accept: "application/json",
@@ -84,8 +84,16 @@ export default class Login extends Component<{}> {
       .then(response => response.json())
       .then(responseJson => {
         console.log(responseJson);
-        alert("Sikeres regisztráció!, Most már be tudsz lépni az adataiddal!");
-        Actions.login();
+        if (responseJson.valid == false) {
+          alert(
+            "Kérlek ellenőrizd az összes adatot, ha úgy sem jó akkor az e-mail cim foglalt"
+          );
+        } else {
+          alert(
+            "Sikeres regisztráció!, Most már be tudsz lépni az adataiddal!"
+          );
+          Actions.login();
+        }
       })
       .catch(error => {
         alert(

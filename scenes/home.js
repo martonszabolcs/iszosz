@@ -63,10 +63,43 @@ export default class Home extends Component<{}> {
   componentDidMount() {
     api.lista().then(lista => {
       this.setState({
-        lista: lista
+        lista: lista.rows
       });
+      console.log(this.state.lista);
     });
   }
+
+  news = async () => {
+    let data = {
+      method: "POST",
+      credentials: "same-origin",
+      mode: "same-origin",
+      body: JSON.stringify({
+        people: this.state.userName,
+        title: "CIM",
+        content: "LEIRÁS",
+        image: "image"
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    return fetch("https://dry-mountain-15425.herokuapp.com/notes", data)
+      .then(response => response.json())
+      .then(responseJson => {
+        console.log(responseJson);
+        api.lista().then(lista => {
+          this.setState({
+            lista: lista.rows
+          });
+          console.log(this.state.lista);
+        });
+      })
+      .catch(error => {
+        alert("HIBA");
+      });
+  };
 
   async getItem() {
     try {
@@ -458,7 +491,11 @@ export default class Home extends Component<{}> {
                 alignItems: "center"
               }}
             >
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  this.news();
+                }}
+              >
                 <Image
                   source={require("../src/plus.png")}
                   style={{ width: width / 10, height: width / 10 }}
@@ -526,7 +563,7 @@ export default class Home extends Component<{}> {
                               }
                             ]}
                           >
-                            {rowData.id} - {rowData.title}
+                            {rowData.people} - {rowData.title}
                           </Text>
                           <Text
                             numberOfLines={4}
