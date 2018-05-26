@@ -103,19 +103,14 @@ export default class Home extends Component<{}> {
 
   async getItem() {
     try {
-      // Retreive the credentials
-      const credentials = await Keychain.getGenericPassword();
-      if (credentials) {
+      const value = await AsyncStorage.getItem("@eterkep:user");
+      if (value !== null) {
         this.setState({
-          userName: credentials.username,
-          token: credentials.password
+          userName: value.name
         });
-        console.log(this.state.userName);
-      } else {
-        console.log("No credentials stored");
       }
     } catch (error) {
-      console.log("Keychain couldn't be accessed!", error);
+      // Error retrieving data
     }
   }
 

@@ -41,11 +41,27 @@ export default class Login extends Component<{}> {
       user: [],
       fadeAnim: new Animated.Value(0)
     };
+    Actions.reset("login");
   }
 
   async setItem() {
-    const username = this.state.user.name;
+    var data = {
+      id: this.state.user.id,
+      token: this.state.token,
+      name: this.state.user.name
+    };
+    const dataok = JSON.stringify(data);
+    const username = this.state.user.id;
     const password = this.state.token;
+    console.log(dataok);
+
+    await AsyncStorage.setItem("@eterkep:user", dataok);
+    const value = await AsyncStorage.getItem("@eterkep:user");
+    if (value !== null) {
+      // We have data!!
+      console.log("mentve az adat");
+      console.log(value);
+    }
 
     // Store the credentials
     await Keychain.setGenericPassword(username, password);

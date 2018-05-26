@@ -64,9 +64,7 @@ export default class Sidebar extends Component<{}> {
           </Text>
         </View>
 
-        <TouchableOpacity
-          onPress={() => Actions.adatlapok({ keywords: "Adatlapok" })}
-        >
+        <TouchableOpacity onPress={() => Actions.profile()}>
           <View
             style={{
               height: height / 20,
