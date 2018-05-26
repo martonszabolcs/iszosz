@@ -69,45 +69,15 @@ export default class Home extends Component<{}> {
     });
   }
 
-  news = async () => {
-    let data = {
-      method: "POST",
-      credentials: "same-origin",
-      mode: "same-origin",
-      body: JSON.stringify({
-        people: this.state.userName,
-        title: "CIM",
-        content: "LEIRÁS",
-        image: "image"
-      }),
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      }
-    };
-    return fetch("https://dry-mountain-15425.herokuapp.com/notes", data)
-      .then(response => response.json())
-      .then(responseJson => {
-        console.log(responseJson);
-        api.lista().then(lista => {
-          this.setState({
-            lista: lista.rows
-          });
-          console.log(this.state.lista);
-        });
-      })
-      .catch(error => {
-        alert("HIBA");
-      });
-  };
-
   async getItem() {
     try {
-      const value = await AsyncStorage.getItem("@eterkep:user");
-      if (value !== null) {
+      const values = await AsyncStorage.getItem("@eterkep:user");
+      if (values !== null) {
+        const value = JSON.parse(values);
         this.setState({
           userName: value.name
         });
+        this.me();
       }
     } catch (error) {
       // Error retrieving data
@@ -135,7 +105,15 @@ export default class Home extends Component<{}> {
   toggleModal(visible) {
     this.setState({ modalVisible: visible });
   }
-
+  news = async () => {
+    api.lista().then(lista => {
+      this.setState({
+        lista: lista.rows
+      });
+      Actions.home();
+      console.log(this.state.lista);
+    });
+  };
   render() {
     console.log(this.state.results);
     var { height, width } = Dimensions.get("window");
@@ -488,7 +466,7 @@ export default class Home extends Component<{}> {
             >
               <TouchableOpacity
                 onPress={() => {
-                  this.news();
+                  Actions.jegyzet();
                 }}
               >
                 <Image
@@ -528,14 +506,7 @@ export default class Home extends Component<{}> {
                     style={{ backgroundColor: "transparent" }}
                   >
                     <View style={{ marginTop: 10 }}>
-                      <TouchableOpacity
-                        onPress={() => {
-                          Actions.findreszletes({
-                            user: rowData,
-                            keywords: this.state.keywords
-                          });
-                        }}
-                      >
+                      <TouchableOpacity onPress={() => {}}>
                         <View
                           style={{
                             backgroundColor: "#D3D3D3",

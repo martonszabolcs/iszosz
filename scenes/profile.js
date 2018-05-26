@@ -99,7 +99,6 @@ export default class Login extends Component<{}> {
           keywords: responseJson.selectedItems,
           petName: responseJson.petName
         });
-        Alert.alert("hello", "jo vagy");
       })
       .catch(error => {
         alert(
@@ -110,7 +109,7 @@ export default class Login extends Component<{}> {
 
   reg = async () => {
     let data = {
-      method: "POST",
+      method: "PUT",
       body: JSON.stringify({
         email: this.state.email,
         name: this.state.name,
@@ -122,7 +121,6 @@ export default class Login extends Component<{}> {
         human: this.state.human,
         service: this.state.service,
         description: this.state.description,
-        keywords: this.state.selectedItems,
         petName: this.state.petName
       }),
       headers: {
@@ -151,9 +149,7 @@ export default class Login extends Component<{}> {
       .catch(error => {
         console.log(error);
 
-        alert(
-          "Kérlek töltsd ki az összes adatot, ha úgy sem jó akkor az e-mail cim foglalt"
-        );
+        alert("Hiba");
       });
   };
 
@@ -265,6 +261,27 @@ export default class Login extends Component<{}> {
                 <Text style={{ color: "black", fontSize: 30 }}>{"Profil"}</Text>
               </View>
             </Animated.View>
+            <View style={{ width: width, height: width / 9 }}>
+              <TouchableOpacity onPress={() => Actions.pop()}>
+                <View
+                  style={{
+                    marginLeft: 20,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "white",
+                    height: width / 9,
+                    width: width / 9,
+                    borderRadius: 30,
+                    marginLeft: 5
+                  }}
+                >
+                  <Image
+                    source={require("../src/backs.png")}
+                    style={{ width: width / 12, height: width / 12 }}
+                  />
+                </View>
+              </TouchableOpacity>
+            </View>
             <View
               style={{
                 alignItems: "center",
@@ -507,7 +524,7 @@ export default class Login extends Component<{}> {
                     }}
                   />
                 </View>
-                <View style={{ flex: 1 }}>
+                {/*<View style={{ flex: 1 }}>
                   <MultiSelect
                     hideTags
                     items={items}
@@ -533,7 +550,7 @@ export default class Login extends Component<{}> {
                     submitButtonText="Kész"
                   />
                   <View />
-                </View>
+                </View>*/}
               </View>
 
               <View

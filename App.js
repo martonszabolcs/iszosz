@@ -33,6 +33,7 @@ import adatlapok from "./scenes/adatlapok";
 import reg from "./scenes/reg";
 import regDone from "./scenes/regDone";
 import profile from "./scenes/profile";
+import jegyzet from "./scenes/jegyzet";
 
 export default class Flux extends Component {
   constructor(props) {
@@ -158,6 +159,7 @@ export default class Flux extends Component {
             <Scene key="profile" component={profile} title="profile" />
             <Scene key="reg" component={reg} title="reg" />
             <Scene key="regDone" component={regDone} title="regDone" />
+            <Scene key="jegyzet" component={jegyzet} title="jegyzet" />
           </Scene>
         </Router>
       </View>
