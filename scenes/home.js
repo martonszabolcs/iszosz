@@ -105,15 +105,7 @@ export default class Home extends Component<{}> {
   toggleModal(visible) {
     this.setState({ modalVisible: visible });
   }
-  news = async () => {
-    api.lista().then(lista => {
-      this.setState({
-        lista: lista.rows
-      });
-      Actions.home();
-      console.log(this.state.lista);
-    });
-  };
+
   render() {
     console.log(this.state.results);
     var { height, width } = Dimensions.get("window");
@@ -506,13 +498,24 @@ export default class Home extends Component<{}> {
                     style={{ backgroundColor: "transparent" }}
                   >
                     <View style={{ marginTop: 10 }}>
-                      <TouchableOpacity onPress={() => {}}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          Actions.jegyzetReszletes({
+                            title: rowData.title,
+                            jegyzetName: rowData.people,
+                            content: rowData.content,
+                            id: rowData.id
+                          });
+                        }}
+                      >
                         <View
                           style={{
-                            backgroundColor: "#D3D3D3",
+                            backgroundColor: "white",
                             width: width / 2 - 40,
                             height: 100,
-                            borderRadius: 10
+                            borderRadius: 10,
+                            borderWidth: 1,
+                            borderColor: "#D3D3D3"
                           }}
                         >
                           <Text

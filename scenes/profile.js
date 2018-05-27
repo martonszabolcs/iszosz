@@ -71,6 +71,22 @@ export default class Login extends Component<{}> {
     }
   }
 
+  deleteOk() {
+    Alert.alert(
+      "Figyelmeztetés!",
+      "Biztos, hogy törölni akarod a fiókod?",
+      [
+        {
+          text: "Mégse",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "Igen", onPress: () => this.delete() }
+      ],
+      { cancelable: false }
+    );
+  }
+
   me() {
     let data = {
       method: "GET",
@@ -101,9 +117,31 @@ export default class Login extends Component<{}> {
         });
       })
       .catch(error => {
-        alert(
-          "Kérlek töltsd ki az összes adatot, ha úgy sem jó akkor az e-mail cim foglalt"
-        );
+        alert("Hiba");
+      });
+  }
+  delete() {
+    let data = {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + this.state.token,
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    };
+    return fetch(
+      "https://dry-mountain-15425.herokuapp.com/users/" + this.state.userId,
+      data
+    )
+      .then(response => response.json())
+      .then(responseJson => {
+        console.log(responseJson);
+        Actions.login();
+      })
+      .catch(error => {
+        console.log(error);
+
+        Actions.login();
       });
   }
 
@@ -124,8 +162,7 @@ export default class Login extends Component<{}> {
         petName: this.state.petName
       }),
       headers: {
-        Authorization: "Bearer" + this.state.token,
-        "Content-Type": "application/x-www-form-urlencoded"
+        Authorization: "Bearer " + this.state.token
       }
     };
     console.log(data);
@@ -138,9 +175,7 @@ export default class Login extends Component<{}> {
       .then(responseJson => {
         console.log(responseJson);
         if (responseJson.valid == false) {
-          alert(
-            "Kérlek ellenőrizd az összes adatot, ha úgy sem jó akkor az e-mail cim foglalt"
-          );
+          alert("Hiba");
         } else {
           alert("Sikeres Módosítás!");
           Actions.home();
@@ -290,8 +325,8 @@ export default class Login extends Component<{}> {
               }}
             >
               <Image
-                source={require("../src/reg.png")}
-                style={{ width: width - 100, height: height / 3 }}
+                source={require("../src/profile.png")}
+                style={{ width: width / 2, height: width / 2 }}
               />
             </View>
 
@@ -577,6 +612,25 @@ export default class Login extends Component<{}> {
                     <Text style={{ color: "#2E348B" }}>
                       {"Adatok módosítása"}
                     </Text>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => this.deleteOk()}>
+                  <View
+                    style={{
+                      height: 40,
+                      marginTop: 20,
+                      backgroundColor: "red",
+                      width: width - 40,
+                      borderColor: "white",
+                      borderRadius: 10,
+                      borderWidth: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderRadius: 20
+                    }}
+                  >
+                    <Text style={{ color: "white" }}>{"Profil törlése"}</Text>
                   </View>
                 </TouchableOpacity>
               </View>

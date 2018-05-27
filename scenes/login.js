@@ -48,7 +48,8 @@ export default class Login extends Component<{}> {
     var data = {
       id: this.state.user.id,
       token: this.state.token,
-      name: this.state.user.name
+      name: this.state.user.name,
+      picture: this.state.user.picture
     };
     const dataok = JSON.stringify(data);
     const username = this.state.user.id;

@@ -23,6 +23,7 @@ import {
 const base64 = require("base-64");
 const utf8 = require("utf8");
 import MultiSelect from "react-native-multiple-select";
+var { height, width } = Dimensions.get("window");
 
 import { Router, Scene, Actions } from "react-native-router-flux";
 
@@ -35,24 +36,12 @@ export default class Login extends Component<{}> {
     console.log(props);
     super(props);
     this.state = {
-      text: "",
-      fadeAnim: new Animated.Value(0),
-      password: "",
-      email: "",
-      name: "",
-      city: "",
-      access_token: "",
-      role: "admin",
-      organization: "",
-      specialization: "",
-      education: "",
-      material: "",
-      human: "",
-      service: "",
-      description: "",
-      petName: "pet",
-      selectedItems: []
+      jegyzetName: this.props.jegyzetName,
+      title: this.props.title,
+      content: this.props.content,
+      id: this.props.id
     };
+    console.log(this.state.id);
     this.getItem();
   }
   async getItem() {
@@ -74,42 +63,45 @@ export default class Login extends Component<{}> {
     }
   }
 
-  news = async () => {
-    let data = {
-      method: "POST",
-      credentials: "same-origin",
-      mode: "same-origin",
-      body: JSON.stringify({
-        people: this.state.userName,
-        title: this.state.title,
-        content: this.state.content,
-        image: this.state.image
-      }),
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      }
-    };
-    return fetch("https://dry-mountain-15425.herokuapp.com/notes", data)
-      .then(response => response.json())
-      .then(responseJson => {
-        Actions.home();
-      })
-      .catch(error => {
-        alert("HIBA");
-      });
-  };
-
-  componentDidMount() {
-    Animated.timing(
-      // Animate over time
-      this.state.fadeAnim, // The animated value to drive
+  deleteApi() {
+    return fetch(
+      "https://dry-mountain-15425.herokuapp.com/notes/" + this.state.id,
       {
-        toValue: 1, // Animate to opacity: 1 (opaque)
-        duration: 500 // Make it take a while
+        method: "DELETE"
       }
-    ).start(); // Starts the animation
+    );
+    api.res().then(res => {
+      Actions.home();
+    });
   }
+
+  delete() {
+    console.log(this.state.jegyzetName);
+    console.log(this.state.userName);
+    if (this.state.jegyzetName == this.state.userName) {
+      return (
+        <TouchableOpacity onPress={() => this.deleteApi()}>
+          <View
+            style={{
+              height: 40,
+              backgroundColor: "white",
+              width: width - 40,
+              borderColor: "#2E348B",
+              borderRadius: 10,
+              borderWidth: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: 20
+            }}
+          >
+            <Text style={{ color: "#2E348B" }}>{"Jegyzet törlése!"}</Text>
+          </View>
+        </TouchableOpacity>
+      );
+    }
+  }
+
+  componentDidMount() {}
 
   componentWillMount() {}
 
@@ -124,7 +116,6 @@ export default class Login extends Component<{}> {
 
   render() {
     let { fadeAnim } = this.state;
-    var { height, width } = Dimensions.get("window");
     var iWidth = width / 240;
     console.log(this.state.material);
 
@@ -132,11 +123,7 @@ export default class Login extends Component<{}> {
       <View style={styles.container}>
         <View style={{ flex: 1 }}>
           <ScrollView>
-            <Animated.View // Special animatable View
-              style={{
-                ...this.props.style,
-                opacity: fadeAnim // Bind opacity to animated value
-              }}
+            <View // Special animatable View
             >
               <View
                 style={{
@@ -146,10 +133,10 @@ export default class Login extends Component<{}> {
                 }}
               >
                 <Text style={{ color: "black", fontSize: 30 }}>
-                  {"Új jegyzet"}
+                  {this.state.title}
                 </Text>
               </View>
-            </Animated.View>
+            </View>
             <View style={{ width: width, height: width / 9 }}>
               <TouchableOpacity onPress={() => Actions.pop()}>
                 <View
@@ -184,50 +171,36 @@ export default class Login extends Component<{}> {
               />
             </View>
 
-            <View style={{ padding: 20, marginTop: height / 50, bottom: 10 }}>
+            <View
+              style={{
+                padding: 20,
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: height / 50,
+                bottom: 10
+              }}
+            >
               <View>
-                <View>
-                  <Text style={{ fontSize: 12, color: "gray" }}>
-                    {"Jegyzet címe"}
+                <View style={{ height: 50 }}>
+                  <Text
+                    style={{ fontSize: 50, textAlign: "center", color: "gray" }}
+                  >
+                    {this.state.jegyzetName}
                   </Text>
-                  <TextInput
-                    ref="FirstInput"
-                    returnKeyType="go"
-                    secureTextEntry={false}
-                    underlineColorAndroid="rgba(0,0,0,0)"
-                    style={{ height: 40 }}
-                    onChangeText={title => this.setState({ title })}
-                    value={this.state.title}
-                  />
-                  <View
-                    style={{
-                      height: 1,
-                      paddingTop: 0.3,
-                      backgroundColor: "gray",
-                      top: -10
-                    }}
-                  />
                 </View>
-
-                <Text style={{ fontSize: 12, color: "gray" }}>{"Leírás"}</Text>
-                <TextInput
-                  ref="FirstInput"
-                  returnKeyType="go"
-                  secureTextEntry={false}
-                  underlineColorAndroid="rgba(0,0,0,0)"
-                  style={{ height: 120, textAlignVertical: "top" }}
-                  multiline
-                  onChangeText={content => this.setState({ content })}
-                  value={this.state.content}
-                />
-                <View
-                  style={{
-                    height: 1,
-                    paddingTop: 0.3,
-                    backgroundColor: "gray",
-                    top: -10
-                  }}
-                />
+                <View style={{ height: 100, marginTop: 20 }}>
+                  <ScrollView>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        textAlign: "center",
+                        color: "gray"
+                      }}
+                    >
+                      {this.state.content}
+                    </Text>
+                  </ScrollView>
+                </View>
               </View>
               {/*<View style={{ flex: 1 }}>
                   <MultiSelect
@@ -265,25 +238,7 @@ export default class Login extends Component<{}> {
                 marginTop: 10
               }}
             >
-              <TouchableOpacity onPress={() => this.news()}>
-                <View
-                  style={{
-                    height: 40,
-                    backgroundColor: "white",
-                    width: width - 40,
-                    borderColor: "#2E348B",
-                    borderRadius: 10,
-                    borderWidth: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderRadius: 20
-                  }}
-                >
-                  <Text style={{ color: "#2E348B" }}>
-                    {"Jegyzet hozzáadása!"}
-                  </Text>
-                </View>
-              </TouchableOpacity>
+              {this.delete()}
             </View>
           </ScrollView>
         </View>
