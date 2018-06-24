@@ -67,6 +67,15 @@ export default class Home extends Component<{}> {
       });
       console.log(this.state.lista);
     });
+    var token = this.state.token;
+    console.log(token);
+    api.users(token).then(result => {
+      console.log(result);
+      this.setState({
+        users: result
+      });
+      console.log(this.state.users);
+    });
   }
 
   async getItem() {
@@ -75,7 +84,10 @@ export default class Home extends Component<{}> {
       if (values !== null) {
         const value = JSON.parse(values);
         this.setState({
-          userName: value.name
+          id: value.id,
+          token: value.token,
+          name: value.name,
+          picture: value.picture
         });
         this.me();
       }

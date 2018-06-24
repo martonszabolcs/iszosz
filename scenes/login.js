@@ -42,6 +42,19 @@ export default class Login extends Component<{}> {
       fadeAnim: new Animated.Value(0)
     };
     Actions.reset("login");
+    this.getItem();
+  }
+  async getItem() {
+    try {
+      const values = await AsyncStorage.getItem("@eterkep:user");
+      console.log(values);
+      if (values !== null) {
+        Actions.home();
+      }
+    } catch (error) {
+      // Error retrieving data
+      console.log(error);
+    }
   }
 
   async setItem() {
