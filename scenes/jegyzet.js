@@ -171,18 +171,6 @@ export default class Login extends Component<{}> {
                 </View>
               </TouchableOpacity>
             </View>
-            <View
-              style={{
-                alignItems: "center",
-                justifyContent: "center",
-                marginTop: 30
-              }}
-            >
-              <Image
-                source={require("../src/notes.png")}
-                style={{ width: height / 4, height: height / 4 }}
-              />
-            </View>
 
             <View style={{ padding: 20, marginTop: height / 50, bottom: 10 }}>
               <View>

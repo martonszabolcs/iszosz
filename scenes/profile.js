@@ -56,19 +56,14 @@ export default class Login extends Component<{}> {
     this.getItem();
   }
   async getItem() {
-    try {
-      const values = await AsyncStorage.getItem("@eterkep:user");
-      if (values !== null) {
-        const value = JSON.parse(values);
-        this.setState({
-          userId: value.id,
-          token: value.token
-        });
-        this.me();
-      }
-    } catch (error) {
-      // Error retrieving data
-    }
+    const values = AsyncStorage.getItem("@eterkep:user");
+
+    const value = JSON.parse(values);
+    this.setState({
+      userId: value.id,
+      token: value.token
+    });
+    this.me();
   }
 
   deleteOk() {

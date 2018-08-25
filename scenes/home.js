@@ -25,6 +25,7 @@ import {
 import { Router, Scene, Actions } from "react-native-router-flux";
 import api from "../utilities/api";
 import * as Keychain from "react-native-keychain";
+const SideMenu = require("react-native-side-menu");
 
 import SearchBar from "react-native-searchbar";
 import Swiper from "react-native-swiper";
@@ -49,7 +50,6 @@ export default class Home extends Component<{}> {
       index: 0,
       canavasOpen: this.props.canavasOpen,
       token: this.props.token,
-      userName: this.props.userName,
       lista: []
     };
     this.dataSource = new ListView.DataSource({
@@ -67,33 +67,33 @@ export default class Home extends Component<{}> {
       });
       console.log(this.state.lista);
     });
-    var token = this.state.token;
-    console.log(token);
-    api.users(token).then(result => {
-      console.log(result);
-      this.setState({
-        users: result
+    setTimeout(() => {
+      this.getItem();
+
+      var token = this.state.token;
+      console.log(token);
+      api.users(token).then(result => {
+        console.log(result);
+        this.setState({
+          users: result
+        });
+        console.log(this.state.users);
       });
-      console.log(this.state.users);
-    });
+    }, 2000);
   }
 
   async getItem() {
-    try {
-      const values = await AsyncStorage.getItem("@eterkep:user");
-      if (values !== null) {
-        const value = JSON.parse(values);
-        this.setState({
-          id: value.id,
-          token: value.token,
-          name: value.name,
-          picture: value.picture
-        });
-        this.me();
-      }
-    } catch (error) {
-      // Error retrieving data
-    }
+    var token = this.state.token;
+    api.me(token).then(value => {
+      console.log(value);
+      this.setState({
+        id: value.id,
+        token: value.token,
+        name: value.name,
+        picture: value.picture
+      });
+      console.log(this.state);
+    });
   }
 
   componentWillMount() {
@@ -101,7 +101,6 @@ export default class Home extends Component<{}> {
     if (this.state.canavasOpen === 1) {
       this.props.handleMenu();
     }
-    this.getItem();
   }
   _handleResults(results) {
     //this.setState({ results });
@@ -124,6 +123,9 @@ export default class Home extends Component<{}> {
     var iWidth = width / 240;
     var cornerLeft = width - 10; // 10 is the width/height of the corner
     var cornerTop = height - 10;
+    var addFlightLeft = (width - 50) / 2;
+    var addFlightTop = height - width / 6;
+    var menu = width / 6;
 
     var navigationView = <SideBar />;
 
@@ -135,6 +137,19 @@ export default class Home extends Component<{}> {
           drawerPosition={DrawerLayoutAndroid.positions.Left}
           renderNavigationView={() => navigationView}
         >
+          <TouchableHighlight
+            onPress={() => Actions.jegyzet()}
+            underlayColor="transparent"
+            style={[
+              styles.newFlight,
+              { top: height * 0.75, left: addFlightLeft }
+            ]}
+          >
+            <Image
+              style={{ width: 50, height: 50 }}
+              source={require("../src/plus.png")}
+            />
+          </TouchableHighlight>
           <Modal
             animationType={"slide"}
             transparent={false}
@@ -436,140 +451,151 @@ export default class Home extends Component<{}> {
 
           <View
             style={{
-              height: height / 3,
+              flex: 1,
               borderRadius: 10,
-              backgroundColor: "#189375",
-              justifyContent: "center",
-              alignItems: "center"
+              backgroundColor: "white"
             }}
           >
             <View
               style={{
                 width: width,
-                padding: 10,
-                backgroundColor: "#189375",
+                backgroundColor: "#2A9371",
                 justifyContent: "center",
-                alignItems: "center"
+                alignItems: "center",
+                padding: 10
               }}
             >
               <Text style={{ color: "white", fontSize: 20 }}>
-                {"Üdvözlünk " + this.state.userName + "!"}
+                {"Szia " + this.state.name + "!"}
               </Text>
             </View>
 
-            <Search />
-
             <View
               style={{
-                top: height / 2.5 / 2,
-                position: "absolute",
-                zIndex: -10,
+                flex: 1,
+                flexDirection: "row",
                 justifyContent: "center",
                 alignItems: "center"
               }}
             >
-              <TouchableOpacity
-                onPress={() => {
-                  Actions.jegyzet();
-                }}
+              <ScrollView
+                removeClippedSubviews={true}
+                style={{ backgroundColor: "transparent" }}
               >
-                <Image
-                  source={require("../src/plus.png")}
-                  style={{ width: width / 10, height: width / 10 }}
-                />
-              </TouchableOpacity>
-
-              <Text style={{ color: "white", fontSize: 16 }}>
-                {"Új jegyzet hozzáadása"}
-              </Text>
-            </View>
-          </View>
-
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center"
-            }}
-          >
-            <ScrollView
-              removeClippedSubviews={true}
-              style={{ backgroundColor: "transparent" }}
-            >
-              <ListView
-                dataSource={this.dataSource.cloneWithRows(this.state.lista)}
-                enableEmptySections={true}
-                initialListSize={0}
-                contentContainerStyle={styles.list}
-                scrollEnabled={true}
-                pageSize={2}
-                renderRow={(rowData, sectionID, rowID, highlightRow) => (
-                  <View
-                    numberOfLines={1}
-                    style={{ backgroundColor: "transparent" }}
-                  >
-                    <View style={{ marginTop: 10 }}>
-                      <TouchableOpacity
-                        onPress={() => {
-                          Actions.jegyzetReszletes({
-                            title: rowData.title,
-                            jegyzetName: rowData.people,
-                            content: rowData.content,
-                            id: rowData.id
-                          });
-                        }}
-                      >
-                        <View
-                          style={{
-                            backgroundColor: "white",
-                            width: width / 2 - 40,
-                            height: 100,
-                            borderRadius: 10,
-                            borderWidth: 1,
-                            borderColor: "#D3D3D3"
+                <ListView
+                  dataSource={this.dataSource.cloneWithRows(this.state.lista)}
+                  enableEmptySections={true}
+                  initialListSize={0}
+                  contentContainerStyle={styles.list}
+                  scrollEnabled={true}
+                  pageSize={2}
+                  renderRow={(rowData, sectionID, rowID, highlightRow) => (
+                    <View
+                      numberOfLines={1}
+                      style={{ backgroundColor: "transparent" }}
+                    >
+                      <View style={{ marginTop: 10 }}>
+                        <TouchableOpacity
+                          onPress={() => {
+                            Actions.jegyzetReszletes({
+                              title: rowData.title,
+                              jegyzetName: rowData.people,
+                              content: rowData.content,
+                              id: rowData.id
+                            });
                           }}
                         >
-                          <Text
-                            numberOfLines={2}
-                            style={[
-                              styles.cim,
-                              {
-                                color: "black",
-                                marginLeft: 5,
-                                marginTop: 5,
-                                marginRight: 5,
-                                textAlign: "center",
-                                fontSize: 12
-                              }
-                            ]}
+                          <View
+                            style={{
+                              backgroundColor: "white",
+                              width: width - 40,
+                              height: width / 5 + 20,
+                              borderRadius: 10,
+                              borderWidth: 1,
+                              borderColor: "#D3D3D3",
+                              flexDirection: "row"
+                            }}
                           >
-                            {rowData.people} - {rowData.title}
-                          </Text>
-                          <Text
-                            numberOfLines={4}
-                            style={[
-                              styles.cim,
-                              {
-                                color: "black",
-                                marginLeft: 5,
-                                marginTop: 5,
-                                marginRight: 5,
-                                textAlign: "center",
-                                fontSize: 12
-                              }
-                            ]}
-                          >
-                            {rowData.content}
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
+                            <View
+                              style={{
+                                width: width / 6 + 20,
+                                borderRadius: 10,
+                                backgroundColor: "#2A9371",
+                                justifyContent: "center",
+                                alignItems: "center"
+                              }}
+                            >
+                              <Image
+                                style={{
+                                  width: width / 6,
+                                  height: width / 6,
+                                  borderRadius: 30
+                                }}
+                                source={{
+                                  uri:
+                                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEU3h8BvVh5IU7q_weev_J4yOj4gI3GpDk8af9qO8fzmSitR5V7Q"
+                                }}
+                              />
+                              <Text
+                                numberOfLines={1}
+                                style={[
+                                  styles.cim,
+                                  {
+                                    color: "white",
+                                    marginLeft: 5,
+                                    fontWeight: "bold",
+                                    marginTop: 5,
+                                    marginRight: 5,
+                                    textAlign: "center",
+                                    fontSize: 12
+                                  }
+                                ]}
+                              >
+                                {rowData.people}
+                              </Text>
+                            </View>
+                            <View style={{ flex: 1 }}>
+                              <Text
+                                numberOfLines={1}
+                                style={[
+                                  styles.cim,
+                                  {
+                                    color: "black",
+                                    marginLeft: 5,
+                                    marginTop: 5,
+                                    marginRight: 5,
+                                    fontSize: 18,
+                                    fontWeight: "bold"
+                                  }
+                                ]}
+                              >
+                                {rowData.title}
+                              </Text>
+                              <Text
+                                numberOfLines={3}
+                                style={[
+                                  styles.cim,
+                                  {
+                                    color: "black",
+                                    marginLeft: 5,
+                                    marginTop: 5,
+                                    marginRight: 5,
+                                    fontSize: 12
+                                  }
+                                ]}
+                              >
+                                {rowData.content}
+                              </Text>
+                            </View>
+                          </View>
+                        </TouchableOpacity>
+                      </View>
                     </View>
-                  </View>
-                )}
-              />
-              <View style={{ height: 100 }} />
-            </ScrollView>
+                  )}
+                />
+                <View style={{ height: 100 }} />
+              </ScrollView>
+            </View>
           </View>
         </DrawerLayoutAndroid>
 
@@ -689,5 +715,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-around"
+  },
+  newFlightStatic: {
+    height: 86,
+    width: 86
+  },
+  newFlight: {
+    height: 86,
+    width: 86,
+    position: "absolute",
+    zIndex: 10
+  },
+
+  newFlightImage: {
+    height: 86,
+    width: 86
   }
 });

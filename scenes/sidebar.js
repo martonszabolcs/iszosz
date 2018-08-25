@@ -35,6 +35,11 @@ export default class Sidebar extends Component<{}> {
     this.state = {};
   }
 
+  logout() {
+    AsyncStorage.setItem("@eterkep:user", "");
+    Actions.login();
+  }
+
   render() {
     var { height, width } = Dimensions.get("window");
     var iWidth = width / 240;
@@ -94,7 +99,7 @@ export default class Sidebar extends Component<{}> {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => Actions.login()}>
+        <TouchableOpacity onPress={() => this.logout()}>
           <View
             style={{
               height: height / 20,

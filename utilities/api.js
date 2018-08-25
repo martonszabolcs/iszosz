@@ -8,6 +8,14 @@ var api = {
     }).then(lista => lista.json());
     console.log(lista);
   },
+  me(token) {
+    return fetch("https://dry-mountain-15425.herokuapp.com/users/me", {
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    }).then(me => me.json());
+    console.log(me);
+  },
 
   users(token) {
     return fetch("https://dry-mountain-15425.herokuapp.com/users", {

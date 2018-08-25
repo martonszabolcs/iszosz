@@ -21,6 +21,7 @@ import {
   Animated
 } from "react-native";
 const base64 = require("base-64");
+import ImagePicker from "react-native-image-crop-picker";
 const utf8 = require("utf8");
 import MultiSelect from "react-native-multiple-select";
 
@@ -127,6 +128,16 @@ export default class Login extends Component<{}> {
     } else {
       Alert.alert("Hibás jelszó", "Kérjük, próbálja újra!");
     }
+  }
+
+  image() {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 400,
+      cropping: true
+    }).then(image => {
+      console.log(image);
+    });
   }
 
   render() {
@@ -512,6 +523,23 @@ export default class Login extends Component<{}> {
                   marginTop: 10
                 }}
               >
+                <TouchableOpacity onPress={() => this.image()}>
+                  <View
+                    style={{
+                      height: 40,
+                      backgroundColor: "white",
+                      width: width - 40,
+                      borderColor: "#2E348B",
+                      borderRadius: 10,
+                      borderWidth: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderRadius: 20
+                    }}
+                  >
+                    <Text style={{ color: "#2E348B" }}>{"Kép feltöltés"}</Text>
+                  </View>
+                </TouchableOpacity>
                 <TouchableOpacity onPress={() => this.reg()}>
                   <View
                     style={{

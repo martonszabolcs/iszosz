@@ -15,6 +15,7 @@ import {
   ScrollView,
   Platform,
   BackHandler,
+  AsyncStorage,
   Alert
 } from "react-native";
 //import SplashScreen from 'react-native-splash-screen'
@@ -41,6 +42,19 @@ export default class Flux extends Component {
     super(props);
     console.log("component created");
     this.state = {};
+    this.getItem();
+  }
+  async getItem() {
+    try {
+      const values = await AsyncStorage.getItem("@eterkep:user");
+      console.log(values);
+      if (values) {
+        Actions.home();
+      }
+    } catch (error) {
+      // Error retrieving data
+      console.log(error);
+    }
   }
   componentDidMount() {
     //Actions.reset('login');
@@ -100,18 +114,18 @@ export default class Flux extends Component {
         style={{
           backgroundColor: "black",
           flex: 1,
-          paddingTop: 25,
+          paddingTop: 0,
           flexDirection: "column"
         }}
       >
         {/* Lekerekitett sarok */}
-        <View style={[styles.roundedCorner, { top: 25, left: 0 }]}>
+        <View style={[styles.roundedCorner, { top: 0, left: 0 }]}>
           <Image
             style={styles.roundedCornerImage}
             source={require("./src/images/style/corner-top-left.png")}
           />
         </View>
-        <View style={[styles.roundedCorner, { top: 25, left: cornerLeft }]}>
+        <View style={[styles.roundedCorner, { top: 0, left: cornerLeft }]}>
           <Image
             style={styles.roundedCornerImage}
             source={require("./src/images/style/corner-top-right.png")}
@@ -132,7 +146,7 @@ export default class Flux extends Component {
           />
         </View>
 
-        <StatusBar hidden={true} transparent={true} />
+        <StatusBar hidden={false} transparent={false} />
 
         <Router>
           <Scene key="root" hideNavBar={true} duration={10}>
