@@ -56,12 +56,10 @@ export default class Login extends Component<{}> {
     this.getItem();
   }
   async getItem() {
-    const values = AsyncStorage.getItem("@eterkep:user");
-
-    const value = JSON.parse(values);
+    const value = AsyncStorage.getItem("@eterkep:token");
+    console.log(value);
     this.setState({
-      userId: value.id,
-      token: value.token
+      token: value
     });
     this.me();
   }
@@ -86,12 +84,12 @@ export default class Login extends Component<{}> {
     let data = {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + this.state.token,
+        Authorization: this.state.token,
         Accept: "application/json",
         "Content-Type": "application/json"
       }
     };
-    return fetch("https://dry-mountain-15425.herokuapp.com/users/me", data)
+    return fetch("https://iszosz.herokuapp.com/users/2", data)
       .then(response => response.json())
       .then(responseJson => {
         console.log(responseJson);

@@ -26,6 +26,8 @@ const utf8 = require("utf8");
 import MultiSelect from "react-native-multiple-select";
 
 import { Router, Scene, Actions } from "react-native-router-flux";
+var { height, width } = Dimensions.get("window");
+import ModalActivityIndicator from "react-native-modal-activityindicator";
 
 import * as Keychain from "react-native-keychain";
 
@@ -51,12 +53,34 @@ export default class Login extends Component<{}> {
       human: "",
       service: "",
       description: "",
-      petName: "pet",
-      selectedItems: []
+      petName: "",
+      selectedItems: [],
+      imagePath: "",
+      indicator: false
     };
   }
 
   reg = async () => {
+    this.setState({ indicator: true });
+    var dataString =
+      "email=" +
+      this.state.email +
+      "&password=" +
+      this.state.password +
+      "&name=" +
+      this.state.name +
+      "&city=" +
+      this.state.city +
+      "&organization=" +
+      this.state.organization +
+      "&specialization=" +
+      this.state.specialization +
+      "&education=" +
+      this.state.education +
+      "&description=" +
+      this.state.description +
+      "&petName=" +
+      this.state.petName;
     let data = {
       method: "POST",
       body: JSON.stringify({
@@ -64,44 +88,68 @@ export default class Login extends Component<{}> {
         email: this.state.email,
         name: this.state.name,
         city: this.state.city,
-        access_token: "e0cAiR20cMQMpSpV1z1DCuLFS3HcArbx",
-        role: "admin",
         organization: this.state.organization,
         specialization: this.state.specialization,
         education: this.state.education,
-        material: this.state.material,
-        human: this.state.human,
-        service: this.state.service,
         description: this.state.description,
         keywords: this.state.selectedItems,
         petName: this.state.petName
       }),
+      body: dataString,
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
+        "Content-Type": "application/x-www-form-urlencoded"
       }
     };
-    return fetch("https://dry-mountain-15425.herokuapp.com/users", data)
+    return fetch("https://iszosz.herokuapp.com/registration", data)
       .then(response => response.json())
       .then(responseJson => {
         console.log(responseJson);
-        if (responseJson.valid == false) {
-          alert(
-            "Kérlek ellenőrizd az összes adatot, ha úgy sem jó akkor az e-mail cim foglalt"
-          );
+        if (responseJson.hasOwnProperty("error")) {
+          this.setState({ indicator: false });
+
+          alert(responseJson.message);
         } else {
-          alert(
-            "Sikeres regisztráció!, Most már be tudsz lépni az adataiddal!"
-          );
-          Actions.login();
+          this.setState({ id: responseJson.id });
+          this.uploadPhoto();
         }
       })
       .catch(error => {
+        this.setState({ indicator: false });
+
+        console.log(error);
         alert(
           "Kérlek töltsd ki az összes adatot, ha úgy sem jó akkor az e-mail cim foglalt"
         );
       });
   };
+
+  async uploadPhoto() {
+    console.log(this.state.imagePath);
+    var url = "https://iszosz.herokuapp.com/users/" + this.state.id + "/avatar";
+    const data = new FormData();
+    data.append("file", {
+      uri: this.state.imagePath,
+      type: "image/jpeg", // or photo.type
+      name: "avatar.jpg",
+      includeBase64: true
+    });
+    fetch(url, {
+      method: "post",
+      body: data
+    })
+      .then(response => response.json())
+      .then(responseJson => {
+        console.log(responseJson);
+        if (responseJson.hasOwnProperty("error")) {
+          alert(responseJson.message);
+          this.setState({ indicator: false });
+        } else {
+          this.setState({ indicator: false });
+          alert("Sikeres regisztráció!");
+          Actions.login();
+        }
+      });
+  }
 
   onSelectedItemsChange = selectedItems => {
     this.setState({ selectedItems });
@@ -134,10 +182,24 @@ export default class Login extends Component<{}> {
     ImagePicker.openPicker({
       width: 300,
       height: 400,
-      cropping: true
+      cropping: true,
+      cropperCircleOverlay: true
     }).then(image => {
       console.log(image);
+      this.setState({ imagePath: image.path });
     });
+  }
+
+  showImage() {
+    console.log(this.state.imagePath);
+    if (this.state.imagePath != "") {
+      return (
+        <Image
+          source={{ uri: this.state.imagePath }}
+          style={{ width: 300, height: 400, margin: 20 }}
+        />
+      );
+    }
   }
 
   render() {
@@ -197,12 +259,16 @@ export default class Login extends Component<{}> {
     ];
     const { selectedItems } = this.state;
     let { fadeAnim } = this.state;
-    var { height, width } = Dimensions.get("window");
     var iWidth = width / 240;
     console.log(this.state.material);
 
     return (
       <View style={styles.container}>
+        <ModalActivityIndicator
+          visible={this.state.indicator}
+          size="small"
+          color="white"
+        />
         <View style={{ flex: 1 }}>
           <ScrollView>
             <Animated.View // Special animatable View
@@ -239,7 +305,9 @@ export default class Login extends Component<{}> {
             <View style={{ padding: 20, marginTop: height / 50, bottom: 10 }}>
               <View>
                 <View>
-                  <Text style={{ fontSize: 12, color: "gray" }}>{"Név"}</Text>
+                  <Text style={{ fontSize: 12, color: "gray" }}>
+                    {"Teljes név"}
+                  </Text>
                   <TextInput
                     ref="FirstInput"
                     returnKeyType="go"
@@ -248,6 +316,28 @@ export default class Login extends Component<{}> {
                     style={{ height: 40 }}
                     onChangeText={name => this.setState({ name })}
                     value={this.state.name}
+                  />
+                  <View
+                    style={{
+                      height: 1,
+                      paddingTop: 0.3,
+                      backgroundColor: "gray",
+                      top: -10
+                    }}
+                  />
+                </View>
+                <View>
+                  <Text style={{ fontSize: 12, color: "gray" }}>
+                    {"Becenév"}
+                  </Text>
+                  <TextInput
+                    ref="FirstInput"
+                    returnKeyType="go"
+                    secureTextEntry={false}
+                    underlineColorAndroid="rgba(0,0,0,0)"
+                    style={{ height: 40 }}
+                    onChangeText={petName => this.setState({ petName })}
+                    value={this.state.petName}
                   />
                   <View
                     style={{
@@ -396,76 +486,6 @@ export default class Login extends Component<{}> {
                 </View>
                 <View>
                   <Text style={{ fontSize: 12, color: "gray" }}>
-                    {"Tárgyi erőforrás"}
-                  </Text>
-                  <TextInput
-                    ref="SecondInput"
-                    returnKeyType="go"
-                    multiline
-                    secureTextEntry={false}
-                    underlineColorAndroid="rgba(0,0,0,0)"
-                    style={{ height: 120, textAlignVertical: "top" }}
-                    onChangeText={material => this.setState({ material })}
-                    value={this.state.material}
-                  />
-                  <View
-                    style={{
-                      height: 1,
-                      paddingTop: 0.3,
-                      backgroundColor: "gray",
-                      top: -10
-                    }}
-                  />
-                </View>
-              </View>
-              <View>
-                <View>
-                  <Text style={{ fontSize: 12, color: "gray" }}>
-                    {"Humán erőforrás"}
-                  </Text>
-                  <TextInput
-                    ref="FirstInput"
-                    returnKeyType="go"
-                    secureTextEntry={false}
-                    underlineColorAndroid="rgba(0,0,0,0)"
-                    style={{ height: 120, textAlignVertical: "top" }}
-                    multiline
-                    onChangeText={human => this.setState({ human })}
-                    value={this.state.human}
-                  />
-                  <View
-                    style={{
-                      height: 1,
-                      paddingTop: 0.3,
-                      backgroundColor: "gray",
-                      top: -10
-                    }}
-                  />
-                </View>
-                <View>
-                  <Text style={{ fontSize: 12, color: "gray" }}>
-                    {"Szolgáltatás"}
-                  </Text>
-                  <TextInput
-                    ref="FirstInput"
-                    returnKeyType="go"
-                    secureTextEntry={false}
-                    underlineColorAndroid="rgba(0,0,0,0)"
-                    style={{ height: 120, textAlignVertical: "top" }}
-                    onChangeText={service => this.setState({ service })}
-                    value={this.state.service}
-                  />
-                  <View
-                    style={{
-                      height: 1,
-                      paddingTop: 0.3,
-                      backgroundColor: "gray",
-                      top: -10
-                    }}
-                  />
-                </View>
-                <View>
-                  <Text style={{ fontSize: 12, color: "gray" }}>
                     {"Leírás"}
                   </Text>
                   <TextInput
@@ -487,7 +507,7 @@ export default class Login extends Component<{}> {
                     }}
                   />
                 </View>
-                <View style={{ flex: 1 }}>
+                {/* <View style={{ flex: 1 }}>
                   <MultiSelect
                     hideTags
                     items={items}
@@ -513,7 +533,7 @@ export default class Login extends Component<{}> {
                     submitButtonText="Kész"
                   />
                   <View />
-                </View>
+                </View>*/}
               </View>
 
               <View
@@ -523,6 +543,7 @@ export default class Login extends Component<{}> {
                   marginTop: 10
                 }}
               >
+                {this.showImage()}
                 <TouchableOpacity onPress={() => this.image()}>
                   <View
                     style={{
@@ -534,10 +555,13 @@ export default class Login extends Component<{}> {
                       borderWidth: 1,
                       justifyContent: "center",
                       alignItems: "center",
-                      borderRadius: 20
+                      borderRadius: 20,
+                      marginBottom: 20
                     }}
                   >
-                    <Text style={{ color: "#2E348B" }}>{"Kép feltöltés"}</Text>
+                    <Text style={{ color: "#2E348B" }}>
+                      {"Válassz magadról egy képet!"}
+                    </Text>
                   </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => this.reg()}>

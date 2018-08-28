@@ -22,6 +22,7 @@ import {
 } from "react-native";
 const base64 = require("base-64");
 const utf8 = require("utf8");
+import ModalActivityIndicator from "react-native-modal-activityindicator";
 
 import { Router, Scene, Actions } from "react-native-router-flux";
 
@@ -44,12 +45,12 @@ export default class Login extends Component<{}> {
     Actions.reset("login");
   }
 
-  async setItem() {
+  /*async setItem() {
     var data = {
       id: this.state.user.id,
       token: this.state.token,
       name: this.state.user.name,
-      picture: this.state.user.picture
+      petName: this.state.user.picture
     };
     const dataok = JSON.stringify(data);
     const username = this.state.user.id;
@@ -66,44 +67,53 @@ export default class Login extends Component<{}> {
 
     // Store the credentials
     await Keychain.setGenericPassword(username, password);
-  }
+  }*/
 
   login = async () => {
-    var data =
-      "Basic " + base64.encode(this.state.email + ":" + this.state.password);
+    this.setState({ indicator: true });
 
-    console.log(data);
-
-    var path = "https://dry-mountain-15425.herokuapp.com/auth";
+    var path = "https://iszosz.herokuapp.com/login";
+    var dataString =
+      "email=" + this.state.email + "&password=" + this.state.password;
 
     fetch(path, {
-      headers: new Headers({
-        Authorization: data,
-        "Content-Type": "application/x-www-form-urlencoded"
-      }),
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Cache-Control": "no-cache"
+      },
       method: "POST",
 
-      body: "access_token=e0cAiR20cMQMpSpV1z1DCuLFS3HcArbx"
+      body: dataString
     })
       .then(response => response.json())
       .then(responseData => {
         console.log("responseData");
         console.log(responseData);
+        this.setState({ indicator: false });
 
-        this.setState({
-          token: responseData.token,
-          user: responseData.user
-        });
+        if (responseData.hasOwnProperty("token")) {
+          console.log(responseData.token);
+          /*var userData = {
+            token : responseData.token;
+            id : responseData.id;
+            petName : responseData.petName;
+          }
+          
+          AsyncStorage.setItem("@eterkep:userData", JSON.stringify(userData));*/
+          Alert.alert("Sikeres Bejelentkezés!", " ");
 
-        this.setItem();
-
-        Actions.home({
-          user: responseData.user,
-          userName: responseData.user.name,
-          token: responseData.token
-        });
+          Actions.home({
+            token: responseData.token,
+            petName: responseData.petName,
+            id: responseData.id
+          });
+        } else {
+          Alert.alert("Hiba történt!", "Kérjük próbálkozzon újra");
+        }
       })
       .catch(error => {
+        this.setState({ indicator: false });
+
         console.log(error);
         Alert.alert("Hiba történt!", "Kérjük próbálkozzon újra");
       });
@@ -138,35 +148,25 @@ export default class Login extends Component<{}> {
 
     return (
       <View style={styles.container}>
-        <Animated.View // Special animatable View
-          style={{
-            ...this.props.style,
-            opacity: fadeAnim // Bind opacity to animated value
-          }}
-        >
-          <View
-            style={{
-              alignItems: "center",
-              justifyContent: "center",
-              paddingTop: 30
-            }}
-          >
-            <Text style={{ color: "black", fontSize: 30 }}>{"Üdvözlünk!"}</Text>
-          </View>
-        </Animated.View>
+        <ModalActivityIndicator
+          visible={this.state.indicator}
+          size="large"
+          color="white"
+        />
 
-        <View
+        <Animated.View
           style={{
             alignItems: "center",
             justifyContent: "center",
-            marginTop: 30
+            marginTop: 30,
+            opacity: fadeAnim
           }}
         >
           <Image
             source={require("../src/man.png")}
-            style={{ width: height / 3, height: height / 3 }}
+            style={{ width: width * 0.8, height: width / 3 }}
           />
-        </View>
+        </Animated.View>
 
         <View
           style={{

@@ -465,169 +465,48 @@ export default class Bongeszes extends Component<{}> {
   }
 
   menu() {
+    var color = "";
     if (this.state.tipus === 1) {
-      return (
-        <View
-          style={[
-            styles.menu,
-            { width: width, height: width / 5, justifyContent: "space-around" }
-          ]}
-        >
-          <TouchableOpacity onPress={() => this.refs["DRAWER"].openDrawer()}>
-            <View style={[styles.menu1]}>
-              <Image
-                source={require("../src/menu/menu.png")}
-                style={{ width: width / 6, height: width / 6 }}
-              />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => Actions.bongeszes({ tipus: 1 })}>
-            <View style={[styles.menu1]}>
-              <Image
-                source={require("../src/menu/icon_human_current.png")}
-                style={{ width: width / 6, height: width / 6 }}
-              />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => Actions.bongeszes({ tipus: 2 })}>
-            <View style={[styles.menu1]}>
-              <Image
-                source={require("../src/menu/targy.png")}
-                style={{ width: width / 6, height: width / 6 }}
-              />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => Actions.bongeszes({ tipus: 3 })}>
-            <View style={[styles.menu1]}>
-              <Image
-                source={require("../src/menu/szolg.png")}
-                style={{ width: width / 6, height: width / 6 }}
-              />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => {
-              this.toggleModal(!this.state.modalVisible);
-            }}
-          >
-            <View style={[styles.menu1]}>{this.modal()}</View>
-          </TouchableOpacity>
-        </View>
-      );
+      color = "#29916F";
     }
     if (this.state.tipus === 2) {
-      return (
-        <View
-          style={[
-            styles.menu,
-            { width: width, height: width / 5, justifyContent: "space-around" }
-          ]}
-        >
-          <TouchableOpacity onPress={() => this.refs["DRAWER"].openDrawer()}>
-            <View style={[styles.menu1]}>
-              <Image
-                source={require("../src/menu/menu.png")}
-                style={{ width: width / 6, height: width / 6 }}
-              />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => Actions.bongeszes({ tipus: 1 })}>
-            <View style={[styles.menu1]}>
-              <Image
-                source={require("../src/menu/hum.png")}
-                style={{ width: width / 6, height: width / 6 }}
-              />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => Actions.bongeszes({ tipus: 2 })}>
-            <View style={[styles.menu1]}>
-              <Image
-                source={require("../src/menu/icon_targy_current.png")}
-                style={{ width: width / 6, height: width / 6 }}
-              />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => Actions.bongeszes({ tipus: 3 })}>
-            <View style={[styles.menu1]}>
-              <Image
-                source={require("../src/menu/szolg.png")}
-                style={{ width: width / 6, height: width / 6 }}
-              />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => {
-              this.toggleModal(!this.state.modalVisible);
-            }}
-          >
-            <View style={[styles.menu1]}>{this.modal()}</View>
-          </TouchableOpacity>
-        </View>
-      );
+      color = "#914545";
     }
-
     if (this.state.tipus === 3) {
-      return (
-        <View
-          style={[
-            styles.menu,
-            { width: width, height: width / 5, justifyContent: "space-around" }
-          ]}
-        >
-          <TouchableOpacity onPress={() => this.refs["DRAWER"].openDrawer()}>
-            <View style={[styles.menu1]}>
-              <Image
-                source={require("../src/menu/menu.png")}
-                style={{ width: width / 6, height: width / 6 }}
-              />
-            </View>
-          </TouchableOpacity>
+      color = "#CEB541";
+    }
 
-          <TouchableOpacity onPress={() => Actions.bongeszes({ tipus: 1 })}>
-            <View style={[styles.menu1]}>
-              <Image
-                source={require("../src/menu/hum.png")}
-                style={{ width: width / 6, height: width / 6 }}
-              />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => Actions.bongeszes({ tipus: 2 })}>
-            <View style={[styles.menu1]}>
-              <Image
-                source={require("../src/menu/targy.png")}
-                style={{ width: width / 6, height: width / 6 }}
-              />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => Actions.bongeszes({ tipus: 3 })}>
-            <View style={[styles.menu1]}>
-              <Image
-                source={require("../src/menu/icon_szolgaltatas_current.png")}
-                style={{ width: width / 6, height: width / 6 }}
-              />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => {
-              this.toggleModal(!this.state.modalVisible);
+    return (
+      <View
+        style={[
+          styles.menu,
+          { width: width, height: width / 5, justifyContent: "space-around" }
+        ]}
+      >
+        <TouchableOpacity onPress={() => Actions.home()}>
+          <View
+            style={{
+              width: width - 40,
+              backgroundColor: color,
+              borderRadius: 10,
+              height: width / 8,
+              justifyContent: "center",
+              alignItems: "center"
             }}
           >
-            <View style={[styles.menu1]}>{this.modal()}</View>
-          </TouchableOpacity>
-        </View>
-      );
-    }
+            <Text
+              style={{
+                color: "white",
+                fontSize: width / 12,
+                textAlign: "center"
+              }}
+            >
+              Főoldal
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
   }
 
   modal() {
@@ -669,121 +548,62 @@ export default class Bongeszes extends Component<{}> {
 
     return (
       <View style={styles.container}>
-        <DrawerLayoutAndroid
-          ref="DRAWER"
-          drawerWidth={width / 2}
-          drawerPosition={DrawerLayoutAndroid.positions.Left}
-          renderNavigationView={() => navigationView}
-        >
-          <Modal
-            animationType={"slide"}
-            transparent={false}
-            visible={this.state.modalVisible}
-            onRequestClose={() => {
-              console.log("Modal has been closed.");
-            }}
+        <View style={{ height: height / 9, flexDirection: "row" }}>
+          <View
+            style={[
+              styles.menu,
+              {
+                width: width,
+                height: width / 5,
+                marginTop: 10,
+                justifyContent: "space-around",
+                alignItems: "center"
+              }
+            ]}
           >
-            <View style={styles.modal}>
-              <View
-                style={{
-                  flex: 1,
-                  backgroundColor: "white",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginTop: height / 10
-                }}
-              >
-                <Text
-                  style={{
-                    color: "black",
-                    fontWeight: "bold",
-                    textAlign: "center",
-                    fontSize: 30
-                  }}
-                >
-                  Szeretettel üdvözlünk az E-Térkép első felhasználói, tesztelői
-                  között!
-                </Text>
+            <TouchableOpacity onPress={() => Actions.bongeszes({ tipus: 1 })}>
+              <View style={[styles.menu1]}>
                 <Image
-                  source={require("../src/homeman.png")}
-                  style={{ width: width / 2, height: width / 2 }}
+                  source={require("../src/menu/hum.png")}
+                  style={{ width: width / 7, height: width / 7 }}
                 />
-                <Text
-                  style={{ color: "black", fontWeight: "bold", fontSize: 30 }}
-                >
-                  {" "}
-                </Text>
+                <Text>Humán erőforrás</Text>
               </View>
+            </TouchableOpacity>
 
-              <View
-                style={{
-                  position: "absolute",
-                  bottom: height / 20,
-                  left: 10,
-                  right: 10,
-                  justifyContent: "center",
-                  alignItems: "center"
-                }}
-              >
-                <TouchableOpacity
-                  onPress={() => {
-                    this.toggleModal(!this.state.modalVisible);
-                  }}
-                >
-                  <View
-                    style={{
-                      height: 40,
-                      backgroundColor: "#2E348B",
-                      width: width - 40,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      borderRadius: 20
-                    }}
-                  >
-                    <Text style={{ color: "white" }}>{"Bezárás"}</Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
-
-          <View style={{ height: height / 10, flexDirection: "row" }}>
-            <TouchableOpacity onPress={() => Actions.home()}>
-              <View
-                style={[
-                  styles.menu1,
-                  {
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "white",
-                    height: width / 9,
-                    width: width / 9,
-                    borderRadius: 30,
-                    marginLeft: 5,
-                    marginTop: 5
-                  }
-                ]}
-              >
+            <TouchableOpacity onPress={() => Actions.bongeszes({ tipus: 2 })}>
+              <View style={[styles.menu1]}>
                 <Image
-                  source={require("../src/menu/icon_home_.png")}
-                  style={{ width: width / 9, height: width / 9 }}
+                  source={require("../src/menu/targy.png")}
+                  style={{ width: width / 7, height: width / 7 }}
                 />
+                <Text>Tárgyi erőforrás</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => Actions.bongeszes({ tipus: 3 })}>
+              <View style={[styles.menu1]}>
+                <Image
+                  source={require("../src/menu/szolg.png")}
+                  style={{ width: width / 7, height: width / 7 }}
+                />
+                <Text>Szolgáltatások</Text>
               </View>
             </TouchableOpacity>
           </View>
-          <View style={{ height: height / 6 }}>{this.tipusok()}</View>
+        </View>
+        <View style={{ height: height / 6 }}>{this.tipusok()}</View>
 
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "column",
-              marginLeft: 20,
-              marginRight: 20
-            }}
-          >
-            {this.leirasokTipus()}
-          </View>
-        </DrawerLayoutAndroid>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "column",
+            marginLeft: 20,
+            marginRight: 20
+          }}
+        >
+          {this.leirasokTipus()}
+        </View>
 
         {this.menu()}
       </View>
