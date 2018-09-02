@@ -18,7 +18,8 @@ import {
   AsyncStorage,
   TextInput,
   Alert,
-  Animated
+  Animated,
+  KeyboardAvoidingView
 } from "react-native";
 const base64 = require("base-64");
 const utf8 = require("utf8");
@@ -64,103 +65,114 @@ export default class Login extends Component<{}> {
   }
 
   render() {
+    if (Platform.OS == "ios") {
+      var enabled = true;
+    } else {
+      var enabled = false;
+    }
     let { fadeAnim } = this.state;
     var { height, width } = Dimensions.get("window");
     var iWidth = width / 240;
 
     return (
-      <View style={styles.container}>
-        <View style={{ flex: 1 }}>
-          <Animated.View // Special animatable View
-            style={{
-              ...this.props.style,
-              opacity: fadeAnim // Bind opacity to animated value
-            }}
-          >
-            <View
+      <KeyboardAvoidingView
+        style={{ height: height }}
+        behavior="padding"
+        enabled={enabled}
+      >
+        <View style={styles.container}>
+          <View style={{ flex: 1 }}>
+            <Animated.View // Special animatable View
               style={{
-                alignItems: "center",
-                justifyContent: "center",
-                paddingTop: 30
+                ...this.props.style,
+                opacity: fadeAnim // Bind opacity to animated value
               }}
             >
-              <Text style={{ color: "black", fontSize: 30 }}>
-                {"Üdvözlünk!"}
-              </Text>
-            </View>
-          </Animated.View>
-
-          <View
-            style={{
-              alignItems: "center",
-              justifyContent: "center",
-              marginTop: 30
-            }}
-          >
-            <Image
-              source={require("../src/iszosz.png")}
-              style={{ width: width - 100, height: height / 3 }}
-            />
-          </View>
-
-          <View
-            style={{
-              padding: 20,
-              marginTop: height / 50,
-              position: "absolute",
-              bottom: 10
-            }}
-          >
-            <View>
-              <View>
-                <Text style={{ fontSize: 12, color: "gray" }}>
-                  {"Regisztrációs kód"}
+              <View
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  paddingTop: 30
+                }}
+              >
+                <Text style={{ color: "black", fontSize: 30 }}>
+                  {"Üdvözlünk!"}
                 </Text>
-                <TextInput
-                  ref="SecondInput"
-                  returnKeyType="go"
-                  secureTextEntry={false}
-                  underlineColorAndroid="rgba(0,0,0,0)"
-                  style={{ height: 40 }}
-                  onChangeText={password => this.setState({ password })}
-                  value={this.state.password}
-                />
-                <View
-                  style={{
-                    height: 1,
-                    paddingTop: 0.3,
-                    backgroundColor: "gray",
-                    top: -10
-                  }}
-                />
               </View>
+            </Animated.View>
+
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: 30
+              }}
+            >
+              <Image
+                source={require("../src/iszosz.png")}
+                style={{ width: width - 100, height: height / 3 }}
+              />
             </View>
 
             <View
               style={{
-                justifyContent: "center",
-                alignItems: "center",
-                marginTop: 10
+                padding: 20,
+                marginTop: height / 50,
+                position: "absolute",
+                bottom: 10
               }}
             >
-              <TouchableOpacity onPress={() => this.validate()}>
-                <View
-                  style={{
-                    height: 40,
-                    backgroundColor: "white",
-                    width: width - 40,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderRadius: 20
-                  }}
-                >
-                  <Text style={{ color: "#2E348B" }}>{"Regisztráció"}</Text>
+              <View>
+                <View>
+                  <Text style={{ fontSize: 12, color: "gray" }}>
+                    {"Regisztrációs kód"}
+                  </Text>
+                  <TextInput
+                    ref="SecondInput"
+                    returnKeyType="go"
+                    secureTextEntry={false}
+                    underlineColorAndroid="rgba(0,0,0,0)"
+                    style={{ height: 40 }}
+                    onChangeText={password => this.setState({ password })}
+                    value={this.state.password}
+                  />
+                  <View
+                    style={{
+                      height: 1,
+                      paddingTop: 0.3,
+                      backgroundColor: "gray",
+                      top: -10
+                    }}
+                  />
                 </View>
-              </TouchableOpacity>
+              </View>
+
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginTop: 10
+                }}
+              >
+                <TouchableOpacity onPress={() => this.validate()}>
+                  <View
+                    style={{
+                      height: 40,
+                      backgroundColor: "white",
+                      width: width - 40,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderRadius: 20
+                    }}
+                  >
+                    <Text style={{ color: "#2E348B" }}>{"Regisztráció"}</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }

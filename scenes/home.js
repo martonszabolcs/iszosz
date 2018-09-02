@@ -27,6 +27,7 @@ import { Router, Scene, Actions } from "react-native-router-flux";
 import api from "../utilities/api";
 import * as Keychain from "react-native-keychain";
 const SideMenu = require("react-native-side-menu");
+import ModalActivityIndicator from "react-native-modal-activityindicator";
 
 import SearchBar from "react-native-searchbar";
 import Swiper from "react-native-swiper";
@@ -49,10 +50,10 @@ export default class Home extends Component<{}> {
       menuOpen: false,
       modalVisible: false,
       index: 0,
-      petName: this.props.petName,
-      id: this.props.id,
+      petName: "",
+      id: "",
       canavasOpen: this.props.canavasOpen,
-      token: this.props.token,
+      token: "",
       lista: []
     };
     this.dataSource = new ListView.DataSource({
@@ -62,42 +63,62 @@ export default class Home extends Component<{}> {
   }
 
   _storeData = async () => {
-    var userData = {
-      petName: this.state.petName,
-      id: this.state.id,
-      token: this.state.token
-    };
-    var string = JSON.stringify(userData);
-    console.log(userData);
-    console.log(string);
-    try {
-      await AsyncStorage.setItem("@eterkep:userData", string);
-    } catch (error) {
-      console.log(error);
-    }
-
     try {
       const value = await AsyncStorage.getItem("@eterkep:userData");
       if (value !== null) {
-        // We have data!!
-        console.log(value);
+        var values = JSON.parse(value);
+        this.setState({
+          token: values.token,
+          id: values.id,
+          petName: values.petName
+        });
       }
     } catch (error) {
       console.log(error);
       // Error retrieving data
     }
   };
+
+  logout() {
+    this.setState({ indicator: true });
+
+    return fetch(
+      "https://iszosz.herokuapp.com/users/" + this.state.id + "/logout",
+      {}
+    )
+      .then(logout => logout.json())
+      .then(json => {
+        AsyncStorage.setItem("@eterkep:userData", "");
+
+        setTimeout(() => {
+          Actions.login();
+          this.setState({ indicator: false });
+        }, 500);
+      });
+  }
+
   handleSwipeIndexChange(index) {
     this.setState({ index });
   }
 
   componentDidMount() {
-    api.lista().then(lista => {
-      this.setState({
-        lista: lista.rows
-      });
-      console.log(this.state.lista);
-    });
+    setTimeout(() => {
+      console.log(this.state.token);
+      let data = {
+        method: "GET",
+        headers: {
+          Authorization: this.state.token
+        }
+      };
+      return fetch("https://iszosz.herokuapp.com/notes", data)
+        .then(notes => notes.json())
+        .then(lista => {
+          this.setState({
+            lista: lista
+          });
+          console.log(this.state.lista);
+        });
+    }, 200);
   }
 
   componentWillMount() {
@@ -123,7 +144,6 @@ export default class Home extends Component<{}> {
   }
 
   render() {
-    console.log(this.state.results);
     var { height, width } = Dimensions.get("window");
     var iWidth = width / 240;
     var cornerLeft = width - 10; // 10 is the width/height of the corner
@@ -136,8 +156,18 @@ export default class Home extends Component<{}> {
 
     return (
       <View style={styles.container}>
+        <ModalActivityIndicator
+          visible={this.state.indicator}
+          size="small"
+          color="white"
+        />
         <TouchableHighlight
-          onPress={() => Actions.jegyzet()}
+          onPress={() =>
+            Actions.jegyzet({
+              id: this.state.id,
+              token: this.state.token
+            })
+          }
           underlayColor="transparent"
           style={[
             styles.newFlight,
@@ -476,7 +506,7 @@ export default class Home extends Component<{}> {
                       onPress: () => console.log("Cancel Pressed"),
                       style: "cancel"
                     },
-                    { text: "Igen", onPress: () => console.log("OK Pressed") }
+                    { text: "Igen", onPress: () => this.logout() }
                   ],
                   { cancelable: false }
                 );
@@ -494,7 +524,20 @@ export default class Home extends Component<{}> {
               {"Szia " + this.state.petName + "!"}
             </Text>
 
-            <View style={{ width: width / 10, height: width / 10 }} />
+            <View
+              style={{
+                width: width / 10,
+                height: width / 10,
+                justifyContent: "center",
+                alignItems: "center"
+              }}
+            >
+              <Text
+                style={{ color: "white", fontSize: 11, textAlign: "right" }}
+              >
+                {"id:" + this.state.id}
+              </Text>
+            </View>
           </View>
 
           <View
@@ -525,10 +568,7 @@ export default class Home extends Component<{}> {
                       <TouchableOpacity
                         onPress={() => {
                           Actions.jegyzetReszletes({
-                            title: rowData.title,
-                            jegyzetName: rowData.people,
-                            content: rowData.content,
-                            id: rowData.id
+                            note: rowData
                           });
                         }}
                       >
@@ -548,19 +588,17 @@ export default class Home extends Component<{}> {
                               width: width / 6 + 20,
                               borderRadius: 10,
                               backgroundColor: "#2A9371",
-                              justifyContent: "center",
-                              alignItems: "center"
+                              justifyContent: "center"
                             }}
                           >
                             <Image
                               style={{
-                                width: width / 6,
-                                height: width / 6,
-                                borderRadius: 30
+                                width: width / 6 + 20,
+                                height: width / 5.2,
+                                borderRadius: 10
                               }}
                               source={{
-                                uri:
-                                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEU3h8BvVh5IU7q_weev_J4yOj4gI3GpDk8af9qO8fzmSitR5V7Q"
+                                uri: rowData.userImageUrl
                               }}
                             />
                             <Text
@@ -578,7 +616,7 @@ export default class Home extends Component<{}> {
                                 }
                               ]}
                             >
-                              {rowData.people}
+                              {rowData.userName}
                             </Text>
                           </View>
                           <View style={{ flex: 1 }}>
@@ -611,7 +649,7 @@ export default class Home extends Component<{}> {
                                 }
                               ]}
                             >
-                              {rowData.content}
+                              {rowData.desc}
                             </Text>
                           </View>
                         </View>
@@ -642,7 +680,7 @@ export default class Home extends Component<{}> {
                 source={require("../src/menu/hum.png")}
                 style={{ width: width / 6, height: width / 6 }}
               />
-              <Text> Profilom </Text>
+              <Text style={{ color: "#2A9371" }}> Profilom </Text>
             </View>
           </TouchableOpacity>
 
@@ -652,7 +690,7 @@ export default class Home extends Component<{}> {
                 source={require("../src/menu/menu.png")}
                 style={{ width: width / 6, height: width / 6 }}
               />
-              <Text> Adatlapok </Text>
+              <Text style={{ color: "#2F3590" }}> Többiek </Text>
             </View>
           </TouchableOpacity>
 
@@ -662,7 +700,7 @@ export default class Home extends Component<{}> {
                 source={require("../src/menu/targy.png")}
                 style={{ width: width / 6, height: width / 6 }}
               />
-              <Text> Erőforrások </Text>
+              <Text style={{ color: "#914646" }}> Erőforrások </Text>
             </View>
           </TouchableOpacity>
 
@@ -674,7 +712,7 @@ export default class Home extends Component<{}> {
                 source={require("../src/menu/inf.png")}
                 style={{ width: width / 6, height: width / 6 }}
               />
-              <Text> Segítség </Text>
+              <Text style={{ color: "#2F3590" }}> Segítség </Text>
             </View>
           </TouchableOpacity>
         </View>

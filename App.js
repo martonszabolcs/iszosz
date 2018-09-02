@@ -46,9 +46,11 @@ export default class Flux extends Component {
   }
   async getItem() {
     try {
-      const values = await AsyncStorage.getItem("@eterkep:user");
+      const values = await AsyncStorage.getItem("@eterkep:userData");
       console.log(values);
-      if (values) {
+      var value = JSON.parse(values);
+
+      if (value.hasOwnProperty("token")) {
         Actions.home();
       }
     } catch (error) {
@@ -102,6 +104,12 @@ export default class Flux extends Component {
     console.log("User logged out");
   }
 
+  StatusBarcsik() {
+    if (Platform.OS == "ios") {
+      return <View style={{ height: 20, backgroundColor: "white" }} />;
+    }
+  }
+
   render() {
     console.log("render");
     // Lekerekitett sarkok pozicioja
@@ -118,6 +126,7 @@ export default class Flux extends Component {
           flexDirection: "column"
         }}
       >
+        {this.StatusBarcsik()}
         {/* Lekerekitett sarok */}
         <View style={[styles.roundedCorner, { top: 0, left: 0 }]}>
           <Image

@@ -25,6 +25,7 @@ const utf8 = require("utf8");
 import MultiSelect from "react-native-multiple-select";
 
 import { Router, Scene, Actions } from "react-native-router-flux";
+import ImagePicker from "react-native-image-crop-picker";
 
 import * as Keychain from "react-native-keychain";
 
@@ -53,16 +54,25 @@ export default class Login extends Component<{}> {
       petName: "pet",
       selectedItems: []
     };
-    this.getItem();
+    this._storeData();
   }
-  async getItem() {
-    const value = AsyncStorage.getItem("@eterkep:token");
-    console.log(value);
-    this.setState({
-      token: value
-    });
-    this.me();
-  }
+  _storeData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("@eterkep:userData");
+      if (value !== null) {
+        var values = JSON.parse(value);
+        this.setState({
+          token: values.token,
+          id: values.id,
+          petName: values.petName
+        });
+        this.me();
+      }
+    } catch (error) {
+      console.log(error);
+      // Error retrieving data
+    }
+  };
 
   deleteOk() {
     Alert.alert(
@@ -81,15 +91,14 @@ export default class Login extends Component<{}> {
   }
 
   me() {
+    console.log(this.state.token);
     let data = {
       method: "GET",
       headers: {
-        Authorization: this.state.token,
-        Accept: "application/json",
-        "Content-Type": "application/json"
+        Authorization: this.state.token
       }
     };
-    return fetch("https://iszosz.herokuapp.com/users/2", data)
+    return fetch("https://iszosz.herokuapp.com/users/" + this.state.id, data)
       .then(response => response.json())
       .then(responseJson => {
         console.log(responseJson);
@@ -106,26 +115,61 @@ export default class Login extends Component<{}> {
           service: responseJson.service,
           description: responseJson.description,
           keywords: responseJson.selectedItems,
-          petName: responseJson.petName
+          petName: responseJson.petName,
+          imageUrl: responseJson.imageURL
         });
       })
       .catch(error => {
         alert("Hiba");
       });
   }
+
+  image() {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 400,
+      cropping: true,
+      cropperCircleOverlay: true
+    }).then(image => {
+      console.log(image);
+      this.setState({ imagePath: image.path, imageUrl: image.path });
+      this.uploadPhoto();
+    });
+  }
+  async uploadPhoto() {
+    console.log(this.state.imagePath);
+    var url = "https://iszosz.herokuapp.com/users/" + this.state.id + "/avatar";
+    const data = new FormData();
+    data.append("file", {
+      uri: this.state.imagePath,
+      type: "image/jpeg", // or photo.type
+      name: "avatar.jpg",
+      includeBase64: true
+    });
+    fetch(url, {
+      method: "post",
+      body: data
+    })
+      .then(response => response.json())
+      .then(responseJson => {
+        console.log(responseJson);
+        if (responseJson.hasOwnProperty("error")) {
+          alert(responseJson.message);
+        } else {
+          alert("Sikeres képfeltöltés!");
+        }
+      });
+  }
+
   delete() {
     let data = {
       method: "DELETE",
       headers: {
-        Authorization: "Bearer " + this.state.token,
         Accept: "application/json",
         "Content-Type": "application/json"
       }
     };
-    return fetch(
-      "https://dry-mountain-15425.herokuapp.com/users/" + this.state.userId,
-      data
-    )
+    return fetch("https://iszosz.herokuapp.com/users/" + this.state.id, data)
       .then(response => response.json())
       .then(responseJson => {
         console.log(responseJson);
@@ -148,26 +192,21 @@ export default class Login extends Component<{}> {
         organization: this.state.organization,
         specialization: this.state.specialization,
         education: this.state.education,
-        material: this.state.material,
-        human: this.state.human,
-        service: this.state.service,
         description: this.state.description,
         petName: this.state.petName
       }),
       headers: {
-        Authorization: "Bearer " + this.state.token
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: this.state.token
       }
     };
     console.log(data);
     console.log(this.state.userId);
-    return fetch(
-      "https://dry-mountain-15425.herokuapp.com/users/" + this.state.userId,
-      data
-    )
+    return fetch("https://iszosz.herokuapp.com/users/" + this.state.id, data)
       .then(response => response.json())
       .then(responseJson => {
         console.log(responseJson);
-        if (responseJson.valid == false) {
+        if (responseJson.hasOwnProperty("error")) {
           alert("Hiba");
         } else {
           alert("Sikeres Módosítás!");
@@ -205,6 +244,14 @@ export default class Login extends Component<{}> {
       this.setState({ password: "" });
     } else {
       Alert.alert("Hibás jelszó", "Kérjük, próbálja újra!");
+    }
+  }
+
+  sourceImage() {
+    if (this.state.imageUrl) {
+      return { uri: this.state.imageUrl };
+    } else {
+      return require("../src/profile.png");
     }
   }
 
@@ -273,24 +320,17 @@ export default class Login extends Component<{}> {
       <View style={styles.container}>
         <View style={{ flex: 1 }}>
           <ScrollView>
-            <Animated.View // Special animatable View
+            <View
               style={{
-                ...this.props.style,
-                opacity: fadeAnim // Bind opacity to animated value
+                width: width,
+                height: width / 9,
+                backgroundColor: "transparent",
+                marginTop: 20,
+                flexDirection: "row",
+                justifyContent: "space-between"
               }}
             >
-              <View
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  paddingTop: 30
-                }}
-              >
-                <Text style={{ color: "black", fontSize: 30 }}>{"Profil"}</Text>
-              </View>
-            </Animated.View>
-            <View style={{ width: width, height: width / 9 }}>
-              <TouchableOpacity onPress={() => Actions.pop()}>
+              <TouchableOpacity onPress={() => Actions.home()}>
                 <View
                   style={{
                     marginLeft: 20,
@@ -309,6 +349,32 @@ export default class Login extends Component<{}> {
                   />
                 </View>
               </TouchableOpacity>
+              <Animated.View // Special animatable View
+                style={{
+                  ...this.props.style,
+                  opacity: fadeAnim,
+                  alignItems: "center" // Bind opacity to animated value
+                }}
+              >
+                <View
+                  style={{
+                    marginTop: 10,
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}
+                >
+                  <Text style={{ color: "black", fontSize: 20 }}>
+                    {"Profil"}
+                  </Text>
+                </View>
+              </Animated.View>
+
+              <View
+                style={{
+                  height: width / 9,
+                  width: width / 9
+                }}
+              />
             </View>
             <View
               style={{
@@ -317,10 +383,16 @@ export default class Login extends Component<{}> {
                 marginTop: 30
               }}
             >
-              <Image
-                source={require("../src/profile.png")}
-                style={{ width: width / 2, height: width / 2 }}
-              />
+              <TouchableOpacity onPress={() => this.image()}>
+                <Image
+                  source={this.sourceImage()}
+                  style={{
+                    width: width / 2,
+                    height: width / 2,
+                    borderRadius: 30
+                  }}
+                />
+              </TouchableOpacity>
             </View>
 
             <View style={{ padding: 20, marginTop: height / 50, bottom: 10 }}>
@@ -335,6 +407,28 @@ export default class Login extends Component<{}> {
                     style={{ height: 40 }}
                     onChangeText={name => this.setState({ name })}
                     value={this.state.name}
+                  />
+                  <View
+                    style={{
+                      height: 1,
+                      paddingTop: 0.3,
+                      backgroundColor: "gray",
+                      top: -10
+                    }}
+                  />
+                </View>
+                <View>
+                  <Text style={{ fontSize: 12, color: "gray" }}>
+                    {"Becenév"}
+                  </Text>
+                  <TextInput
+                    ref="FirstInput"
+                    returnKeyType="go"
+                    secureTextEntry={false}
+                    underlineColorAndroid="rgba(0,0,0,0)"
+                    style={{ height: 40 }}
+                    onChangeText={petName => this.setState({ petName })}
+                    value={this.state.petName}
                   />
                   <View
                     style={{
@@ -459,76 +553,8 @@ export default class Login extends Component<{}> {
                     }}
                   />
                 </View>
-                <View>
-                  <Text style={{ fontSize: 12, color: "gray" }}>
-                    {"Tárgyi erőforrás"}
-                  </Text>
-                  <TextInput
-                    ref="SecondInput"
-                    returnKeyType="go"
-                    multiline
-                    secureTextEntry={false}
-                    underlineColorAndroid="rgba(0,0,0,0)"
-                    style={{ height: 120, textAlignVertical: "top" }}
-                    onChangeText={material => this.setState({ material })}
-                    value={this.state.material}
-                  />
-                  <View
-                    style={{
-                      height: 1,
-                      paddingTop: 0.3,
-                      backgroundColor: "gray",
-                      top: -10
-                    }}
-                  />
-                </View>
               </View>
               <View>
-                <View>
-                  <Text style={{ fontSize: 12, color: "gray" }}>
-                    {"Humán erőforrás"}
-                  </Text>
-                  <TextInput
-                    ref="FirstInput"
-                    returnKeyType="go"
-                    secureTextEntry={false}
-                    underlineColorAndroid="rgba(0,0,0,0)"
-                    style={{ height: 120, textAlignVertical: "top" }}
-                    multiline
-                    onChangeText={human => this.setState({ human })}
-                    value={this.state.human}
-                  />
-                  <View
-                    style={{
-                      height: 1,
-                      paddingTop: 0.3,
-                      backgroundColor: "gray",
-                      top: -10
-                    }}
-                  />
-                </View>
-                <View>
-                  <Text style={{ fontSize: 12, color: "gray" }}>
-                    {"Szolgáltatás"}
-                  </Text>
-                  <TextInput
-                    ref="FirstInput"
-                    returnKeyType="go"
-                    secureTextEntry={false}
-                    underlineColorAndroid="rgba(0,0,0,0)"
-                    style={{ height: 120, textAlignVertical: "top" }}
-                    onChangeText={service => this.setState({ service })}
-                    value={this.state.service}
-                  />
-                  <View
-                    style={{
-                      height: 1,
-                      paddingTop: 0.3,
-                      backgroundColor: "gray",
-                      top: -10
-                    }}
-                  />
-                </View>
                 <View>
                   <Text style={{ fontSize: 12, color: "gray" }}>
                     {"Leírás"}
@@ -613,7 +639,7 @@ export default class Login extends Component<{}> {
                     style={{
                       height: 40,
                       marginTop: 20,
-                      backgroundColor: "red",
+                      backgroundColor: "#914646",
                       width: width - 40,
                       borderColor: "white",
                       borderRadius: 10,

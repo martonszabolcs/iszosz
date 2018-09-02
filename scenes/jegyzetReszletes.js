@@ -39,46 +39,59 @@ export default class Login extends Component<{}> {
       jegyzetName: this.props.jegyzetName,
       title: this.props.title,
       content: this.props.content,
-      id: this.props.id
+      id: this.props.id,
+      note: this.props.note
     };
     console.log(this.state.id);
-    this.getItem();
+    this._storeData();
   }
-  async getItem() {
+  _storeData = async () => {
     try {
-      const values = await AsyncStorage.getItem("@eterkep:user");
-      if (values !== null) {
-        const value = JSON.parse(values);
+      const value = await AsyncStorage.getItem("@eterkep:userData");
+      if (value !== null) {
+        var values = JSON.parse(value);
         this.setState({
-          userId: value.id,
-          token: value.token,
-          userName: value.name,
-          picture: value.picture
+          token: values.token,
+          id: values.id,
+          petName: values.petName
         });
-        this.me();
-        console.log(this.state.image);
       }
     } catch (error) {
+      console.log(error);
       // Error retrieving data
     }
-  }
+  };
 
   deleteApi() {
-    return fetch(
-      "https://dry-mountain-15425.herokuapp.com/notes/" + this.state.id,
-      {
-        method: "DELETE"
+    let data = {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
       }
-    );
-    api.res().then(res => {
-      Actions.home();
-    });
+    };
+    return fetch(
+      "https://iszosz.herokuapp.com/users/" +
+        this.state.id +
+        "/notes/" +
+        this.state.note.id,
+      data
+    )
+      .then(response => response.json())
+      .then(responseJson => {
+        console.log(responseJson);
+        Actions.home();
+      })
+      .catch(error => {
+        console.log(error);
+
+        Actions.home();
+      });
   }
 
   delete() {
     console.log(this.state.jegyzetName);
     console.log(this.state.userName);
-    if (this.state.jegyzetName == this.state.userName) {
+    if (this.state.note.userId == this.state.id) {
       return (
         <TouchableOpacity onPress={() => this.deleteApi()}>
           <View
@@ -86,7 +99,7 @@ export default class Login extends Component<{}> {
               height: 40,
               backgroundColor: "white",
               width: width - 40,
-              borderColor: "#2E348B",
+              borderColor: "#914646",
               borderRadius: 10,
               borderWidth: 1,
               justifyContent: "center",
@@ -94,7 +107,7 @@ export default class Login extends Component<{}> {
               borderRadius: 20
             }}
           >
-            <Text style={{ color: "#2E348B" }}>{"Jegyzet törlése!"}</Text>
+            <Text style={{ color: "#914646" }}>{"Jegyzet törlése!"}</Text>
           </View>
         </TouchableOpacity>
       );
@@ -123,22 +136,17 @@ export default class Login extends Component<{}> {
       <View style={styles.container}>
         <View style={{ flex: 1 }}>
           <ScrollView>
-            <View // Special animatable View
+            <View
+              style={{
+                width: width,
+                height: width / 9,
+                backgroundColor: "transparent",
+                marginTop: 20,
+                flexDirection: "row",
+                justifyContent: "space-between"
+              }}
             >
-              <View
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  paddingTop: 30
-                }}
-              >
-                <Text style={{ color: "black", fontSize: 30 }}>
-                  {this.state.title}
-                </Text>
-              </View>
-            </View>
-            <View style={{ width: width, height: width / 9 }}>
-              <TouchableOpacity onPress={() => Actions.pop()}>
+              <TouchableOpacity onPress={() => Actions.home()}>
                 <View
                   style={{
                     marginLeft: 20,
@@ -157,6 +165,36 @@ export default class Login extends Component<{}> {
                   />
                 </View>
               </TouchableOpacity>
+              <Animated.View // Special animatable View
+                style={{
+                  ...this.props.style,
+                  opacity: fadeAnim,
+                  alignItems: "center" // Bind opacity to animated value
+                }}
+              >
+                <View
+                  style={{
+                    marginTop: 10,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: width / 2
+                  }}
+                >
+                  <Text
+                    numberOfLines={1}
+                    style={{ color: "black", fontSize: 20 }}
+                  >
+                    {this.state.note.title}
+                  </Text>
+                </View>
+              </Animated.View>
+
+              <View
+                style={{
+                  height: width / 9,
+                  width: width / 9
+                }}
+              />
             </View>
 
             <View
@@ -168,24 +206,71 @@ export default class Login extends Component<{}> {
                 bottom: 10
               }}
             >
-              <View>
-                <View style={{ height: 50 }}>
+              <View
+                style={{
+                  justifyContent: "space-around",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  width: width - 40,
+                  borderRadius: 20,
+                  borderColor: "white",
+                  borderWidth: 1
+                }}
+              >
+                <Image
+                  source={{ uri: this.state.note.userImageUrl }}
+                  style={{
+                    width: width / 3,
+                    height: width / 3,
+                    borderRadius: 30
+                  }}
+                />
+                <View
+                  style={{
+                    justifyContent: "center",
+                    width: width / 2.5,
+                    alignItems: "center",
+                    flexDirection: "column",
+                    marginRight: 10
+                  }}
+                >
                   <Text
-                    style={{ fontSize: 50, textAlign: "center", color: "gray" }}
+                    style={{ fontSize: 20, textAlign: "center", color: "gray" }}
                   >
-                    {this.state.jegyzetName}
+                    {this.state.note.userName}
+                  </Text>
+                  <Text
+                    numberOfLines={3}
+                    style={{
+                      fontSize: 16,
+                      textAlign: "center",
+                      color: "black"
+                    }}
+                  >
+                    {this.state.note.title}
                   </Text>
                 </View>
-                <View style={{ height: 100, marginTop: 20 }}>
+              </View>
+              <View>
+                <View
+                  style={{
+                    height: width * 0.7,
+                    width: width - 40,
+                    backgroundColor: "#EEEEEE",
+                    borderRadius: 10,
+                    marginTop: 20
+                  }}
+                >
                   <ScrollView>
                     <Text
                       style={{
-                        fontSize: 12,
-                        textAlign: "center",
+                        fontSize: 16,
+                        textAlign: "left",
+                        padding: 10,
                         color: "gray"
                       }}
                     >
-                      {this.state.content}
+                      {this.state.note.desc}
                     </Text>
                   </ScrollView>
                 </View>

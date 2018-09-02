@@ -18,7 +18,8 @@ import {
   AsyncStorage,
   TextInput,
   Alert,
-  Animated
+  Animated,
+  KeyboardAvoidingView
 } from "react-native";
 const base64 = require("base-64");
 import ImagePicker from "react-native-image-crop-picker";
@@ -203,6 +204,11 @@ export default class Login extends Component<{}> {
   }
 
   render() {
+    if (Platform.OS == "ios") {
+      var enabled = true;
+    } else {
+      var enabled = false;
+    }
     var items = [
       {
         id: "1",
@@ -263,251 +269,298 @@ export default class Login extends Component<{}> {
     console.log(this.state.material);
 
     return (
-      <View style={styles.container}>
-        <ModalActivityIndicator
-          visible={this.state.indicator}
-          size="small"
-          color="white"
-        />
-        <View style={{ flex: 1 }}>
-          <ScrollView>
-            <Animated.View // Special animatable View
-              style={{
-                ...this.props.style,
-                opacity: fadeAnim // Bind opacity to animated value
-              }}
-            >
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior="padding"
+        enabled={enabled}
+      >
+        <View style={styles.container}>
+          <ModalActivityIndicator
+            visible={this.state.indicator}
+            size="small"
+            color="white"
+          />
+          <View style={{ flex: 1 }}>
+            <ScrollView>
+              <View
+                style={{
+                  width: width,
+                  height: width / 9,
+                  backgroundColor: "transparent",
+                  marginTop: 20,
+                  flexDirection: "row",
+                  justifyContent: "space-between"
+                }}
+              >
+                <TouchableOpacity onPress={() => Actions.login()}>
+                  <View
+                    style={{
+                      marginLeft: 20,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "white",
+                      height: width / 9,
+                      width: width / 9,
+                      borderRadius: 30,
+                      marginLeft: 5
+                    }}
+                  >
+                    <Image
+                      source={require("../src/backs.png")}
+                      style={{ width: width / 12, height: width / 12 }}
+                    />
+                  </View>
+                </TouchableOpacity>
+                <Animated.View // Special animatable View
+                  style={{
+                    ...this.props.style,
+                    opacity: fadeAnim,
+                    alignItems: "center" // Bind opacity to animated value
+                  }}
+                >
+                  <View
+                    style={{
+                      marginTop: 10,
+                      alignItems: "center",
+                      justifyContent: "center"
+                    }}
+                  >
+                    <Text style={{ color: "black", fontSize: 20 }}>
+                      {"Regisztráció"}
+                    </Text>
+                  </View>
+                </Animated.View>
+
+                <View
+                  style={{
+                    height: width / 9,
+                    width: width / 9
+                  }}
+                />
+              </View>
               <View
                 style={{
                   alignItems: "center",
                   justifyContent: "center",
-                  paddingTop: 30
+                  marginTop: 30
                 }}
               >
-                <Text style={{ color: "black", fontSize: 30 }}>
-                  {"Regisztráció"}
-                </Text>
+                <Image
+                  source={require("../src/reg.png")}
+                  style={{ width: width - 100, height: height / 3 }}
+                />
               </View>
-            </Animated.View>
-            <View
-              style={{
-                alignItems: "center",
-                justifyContent: "center",
-                marginTop: 30
-              }}
-            >
-              <Image
-                source={require("../src/reg.png")}
-                style={{ width: width - 100, height: height / 3 }}
-              />
-            </View>
 
-            <View style={{ padding: 20, marginTop: height / 50, bottom: 10 }}>
-              <View>
+              <View style={{ padding: 20, marginTop: height / 50, bottom: 10 }}>
                 <View>
-                  <Text style={{ fontSize: 12, color: "gray" }}>
-                    {"Teljes név"}
-                  </Text>
-                  <TextInput
-                    ref="FirstInput"
-                    returnKeyType="go"
-                    secureTextEntry={false}
-                    underlineColorAndroid="rgba(0,0,0,0)"
-                    style={{ height: 40 }}
-                    onChangeText={name => this.setState({ name })}
-                    value={this.state.name}
-                  />
-                  <View
-                    style={{
-                      height: 1,
-                      paddingTop: 0.3,
-                      backgroundColor: "gray",
-                      top: -10
-                    }}
-                  />
+                  <View>
+                    <Text style={{ fontSize: 12, color: "gray" }}>
+                      {"Teljes név"}
+                    </Text>
+                    <TextInput
+                      ref="FirstInput"
+                      returnKeyType="go"
+                      secureTextEntry={false}
+                      underlineColorAndroid="rgba(0,0,0,0)"
+                      style={{ height: 40 }}
+                      onChangeText={name => this.setState({ name })}
+                      value={this.state.name}
+                    />
+                    <View
+                      style={{
+                        height: 1,
+                        paddingTop: 0.3,
+                        backgroundColor: "gray",
+                        top: -10
+                      }}
+                    />
+                  </View>
+                  <View>
+                    <Text style={{ fontSize: 12, color: "gray" }}>
+                      {"Becenév"}
+                    </Text>
+                    <TextInput
+                      ref="FirstInput"
+                      returnKeyType="go"
+                      secureTextEntry={false}
+                      underlineColorAndroid="rgba(0,0,0,0)"
+                      style={{ height: 40 }}
+                      onChangeText={petName => this.setState({ petName })}
+                      value={this.state.petName}
+                    />
+                    <View
+                      style={{
+                        height: 1,
+                        paddingTop: 0.3,
+                        backgroundColor: "gray",
+                        top: -10
+                      }}
+                    />
+                  </View>
+                  <View>
+                    <Text style={{ fontSize: 12, color: "gray" }}>
+                      {"Város"}
+                    </Text>
+                    <TextInput
+                      ref="FirstInput"
+                      returnKeyType="go"
+                      secureTextEntry={false}
+                      underlineColorAndroid="rgba(0,0,0,0)"
+                      style={{ height: 40 }}
+                      onChangeText={city => this.setState({ city })}
+                      value={this.state.city}
+                    />
+                    <View
+                      style={{
+                        height: 1,
+                        paddingTop: 0.3,
+                        backgroundColor: "gray",
+                        top: -10
+                      }}
+                    />
+                  </View>
+                  <View>
+                    <Text style={{ fontSize: 12, color: "gray" }}>
+                      {"E-mail"}
+                    </Text>
+                    <TextInput
+                      ref="FirstInput"
+                      returnKeyType="go"
+                      secureTextEntry={false}
+                      underlineColorAndroid="rgba(0,0,0,0)"
+                      style={{ height: 40 }}
+                      onChangeText={email => this.setState({ email })}
+                      value={this.state.email}
+                    />
+                    <View
+                      style={{
+                        height: 1,
+                        paddingTop: 0.3,
+                        backgroundColor: "gray",
+                        top: -10
+                      }}
+                    />
+                  </View>
+                  <View>
+                    <Text style={{ fontSize: 12, color: "gray" }}>
+                      {"Jelszó"}
+                    </Text>
+                    <TextInput
+                      ref="SecondInput"
+                      returnKeyType="go"
+                      secureTextEntry={true}
+                      underlineColorAndroid="rgba(0,0,0,0)"
+                      style={{ height: 40 }}
+                      onChangeText={password => this.setState({ password })}
+                      value={this.state.password}
+                    />
+                    <View
+                      style={{
+                        height: 1,
+                        paddingTop: 0.3,
+                        backgroundColor: "gray",
+                        top: -10
+                      }}
+                    />
+                  </View>
                 </View>
                 <View>
-                  <Text style={{ fontSize: 12, color: "gray" }}>
-                    {"Becenév"}
-                  </Text>
-                  <TextInput
-                    ref="FirstInput"
-                    returnKeyType="go"
-                    secureTextEntry={false}
-                    underlineColorAndroid="rgba(0,0,0,0)"
-                    style={{ height: 40 }}
-                    onChangeText={petName => this.setState({ petName })}
-                    value={this.state.petName}
-                  />
-                  <View
-                    style={{
-                      height: 1,
-                      paddingTop: 0.3,
-                      backgroundColor: "gray",
-                      top: -10
-                    }}
-                  />
-                </View>
-                <View>
-                  <Text style={{ fontSize: 12, color: "gray" }}>{"Város"}</Text>
-                  <TextInput
-                    ref="FirstInput"
-                    returnKeyType="go"
-                    secureTextEntry={false}
-                    underlineColorAndroid="rgba(0,0,0,0)"
-                    style={{ height: 40 }}
-                    onChangeText={city => this.setState({ city })}
-                    value={this.state.city}
-                  />
-                  <View
-                    style={{
-                      height: 1,
-                      paddingTop: 0.3,
-                      backgroundColor: "gray",
-                      top: -10
-                    }}
-                  />
-                </View>
-                <View>
-                  <Text style={{ fontSize: 12, color: "gray" }}>
-                    {"E-mail"}
-                  </Text>
-                  <TextInput
-                    ref="FirstInput"
-                    returnKeyType="go"
-                    secureTextEntry={false}
-                    underlineColorAndroid="rgba(0,0,0,0)"
-                    style={{ height: 40 }}
-                    onChangeText={email => this.setState({ email })}
-                    value={this.state.email}
-                  />
-                  <View
-                    style={{
-                      height: 1,
-                      paddingTop: 0.3,
-                      backgroundColor: "gray",
-                      top: -10
-                    }}
-                  />
-                </View>
-                <View>
-                  <Text style={{ fontSize: 12, color: "gray" }}>
-                    {"Jelszó"}
-                  </Text>
-                  <TextInput
-                    ref="SecondInput"
-                    returnKeyType="go"
-                    secureTextEntry={true}
-                    underlineColorAndroid="rgba(0,0,0,0)"
-                    style={{ height: 40 }}
-                    onChangeText={password => this.setState({ password })}
-                    value={this.state.password}
-                  />
-                  <View
-                    style={{
-                      height: 1,
-                      paddingTop: 0.3,
-                      backgroundColor: "gray",
-                      top: -10
-                    }}
-                  />
-                </View>
-              </View>
-              <View>
-                <View>
-                  <Text style={{ fontSize: 12, color: "gray" }}>
-                    {"Szervezet"}
-                  </Text>
-                  <TextInput
-                    ref="FirstInput"
-                    returnKeyType="go"
-                    secureTextEntry={false}
-                    underlineColorAndroid="rgba(0,0,0,0)"
-                    style={{ height: 40 }}
-                    onChangeText={organization =>
-                      this.setState({ organization })
-                    }
-                    value={this.state.organization}
-                  />
-                  <View
-                    style={{
-                      height: 1,
-                      paddingTop: 0.3,
-                      backgroundColor: "gray",
-                      top: -10
-                    }}
-                  />
-                </View>
-                <View>
-                  <Text style={{ fontSize: 12, color: "gray" }}>
-                    {"Szakterület"}
-                  </Text>
-                  <TextInput
-                    ref="FirstInput"
-                    returnKeyType="go"
-                    secureTextEntry={false}
-                    underlineColorAndroid="rgba(0,0,0,0)"
-                    style={{ height: 40 }}
-                    onChangeText={specialization =>
-                      this.setState({ specialization })
-                    }
-                    value={this.state.specialization}
-                  />
-                  <View
-                    style={{
-                      height: 1,
-                      paddingTop: 0.3,
-                      backgroundColor: "gray",
-                      top: -10
-                    }}
-                  />
-                </View>
-                <View>
-                  <Text style={{ fontSize: 12, color: "gray" }}>
-                    {"Tanulmányok"}
-                  </Text>
-                  <TextInput
-                    ref="FirstInput"
-                    returnKeyType="go"
-                    secureTextEntry={false}
-                    underlineColorAndroid="rgba(0,0,0,0)"
-                    style={{ height: 40 }}
-                    onChangeText={education => this.setState({ education })}
-                    value={this.state.education}
-                  />
-                  <View
-                    style={{
-                      height: 1,
-                      paddingTop: 0.3,
-                      backgroundColor: "gray",
-                      top: -10
-                    }}
-                  />
-                </View>
-                <View>
-                  <Text style={{ fontSize: 12, color: "gray" }}>
-                    {"Leírás"}
-                  </Text>
-                  <TextInput
-                    ref="FirstInput"
-                    returnKeyType="go"
-                    secureTextEntry={false}
-                    underlineColorAndroid="rgba(0,0,0,0)"
-                    style={{ height: 120, textAlignVertical: "top" }}
-                    multiline
-                    onChangeText={description => this.setState({ description })}
-                    value={this.state.description}
-                  />
-                  <View
-                    style={{
-                      height: 1,
-                      paddingTop: 0.3,
-                      backgroundColor: "gray",
-                      top: -10
-                    }}
-                  />
-                </View>
-                {/* <View style={{ flex: 1 }}>
+                  <View>
+                    <Text style={{ fontSize: 12, color: "gray" }}>
+                      {"Szervezet"}
+                    </Text>
+                    <TextInput
+                      ref="FirstInput"
+                      returnKeyType="go"
+                      secureTextEntry={false}
+                      underlineColorAndroid="rgba(0,0,0,0)"
+                      style={{ height: 40 }}
+                      onChangeText={organization =>
+                        this.setState({ organization })
+                      }
+                      value={this.state.organization}
+                    />
+                    <View
+                      style={{
+                        height: 1,
+                        paddingTop: 0.3,
+                        backgroundColor: "gray",
+                        top: -10
+                      }}
+                    />
+                  </View>
+                  <View>
+                    <Text style={{ fontSize: 12, color: "gray" }}>
+                      {"Szakterület"}
+                    </Text>
+                    <TextInput
+                      ref="FirstInput"
+                      returnKeyType="go"
+                      secureTextEntry={false}
+                      underlineColorAndroid="rgba(0,0,0,0)"
+                      style={{ height: 40 }}
+                      onChangeText={specialization =>
+                        this.setState({ specialization })
+                      }
+                      value={this.state.specialization}
+                    />
+                    <View
+                      style={{
+                        height: 1,
+                        paddingTop: 0.3,
+                        backgroundColor: "gray",
+                        top: -10
+                      }}
+                    />
+                  </View>
+                  <View>
+                    <Text style={{ fontSize: 12, color: "gray" }}>
+                      {"Tanulmányok"}
+                    </Text>
+                    <TextInput
+                      ref="FirstInput"
+                      returnKeyType="go"
+                      secureTextEntry={false}
+                      underlineColorAndroid="rgba(0,0,0,0)"
+                      style={{ height: 40 }}
+                      onChangeText={education => this.setState({ education })}
+                      value={this.state.education}
+                    />
+                    <View
+                      style={{
+                        height: 1,
+                        paddingTop: 0.3,
+                        backgroundColor: "gray",
+                        top: -10
+                      }}
+                    />
+                  </View>
+                  <View>
+                    <Text style={{ fontSize: 12, color: "gray" }}>
+                      {"Leírás"}
+                    </Text>
+                    <TextInput
+                      ref="FirstInput"
+                      returnKeyType="go"
+                      secureTextEntry={false}
+                      underlineColorAndroid="rgba(0,0,0,0)"
+                      style={{ height: 120, textAlignVertical: "top" }}
+                      multiline
+                      onChangeText={description =>
+                        this.setState({ description })
+                      }
+                      value={this.state.description}
+                    />
+                    <View
+                      style={{
+                        height: 1,
+                        paddingTop: 0.3,
+                        backgroundColor: "gray",
+                        top: -10
+                      }}
+                    />
+                  </View>
+                  {/* <View style={{ flex: 1 }}>
                   <MultiSelect
                     hideTags
                     items={items}
@@ -534,58 +587,59 @@ export default class Login extends Component<{}> {
                   />
                   <View />
                 </View>*/}
-              </View>
+                </View>
 
-              <View
-                style={{
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: 10
-                }}
-              >
-                {this.showImage()}
-                <TouchableOpacity onPress={() => this.image()}>
-                  <View
-                    style={{
-                      height: 40,
-                      backgroundColor: "white",
-                      width: width - 40,
-                      borderColor: "#2E348B",
-                      borderRadius: 10,
-                      borderWidth: 1,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      borderRadius: 20,
-                      marginBottom: 20
-                    }}
-                  >
-                    <Text style={{ color: "#2E348B" }}>
-                      {"Válassz magadról egy képet!"}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => this.reg()}>
-                  <View
-                    style={{
-                      height: 40,
-                      backgroundColor: "white",
-                      width: width - 40,
-                      borderColor: "#2E348B",
-                      borderRadius: 10,
-                      borderWidth: 1,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      borderRadius: 20
-                    }}
-                  >
-                    <Text style={{ color: "#2E348B" }}>{"Regisztráció"}</Text>
-                  </View>
-                </TouchableOpacity>
+                <View
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: 10
+                  }}
+                >
+                  {this.showImage()}
+                  <TouchableOpacity onPress={() => this.image()}>
+                    <View
+                      style={{
+                        height: 40,
+                        backgroundColor: "white",
+                        width: width - 40,
+                        borderColor: "#2E348B",
+                        borderRadius: 10,
+                        borderWidth: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRadius: 20,
+                        marginBottom: 20
+                      }}
+                    >
+                      <Text style={{ color: "#2E348B" }}>
+                        {"Válassz magadról egy képet!"}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => this.reg()}>
+                    <View
+                      style={{
+                        height: 40,
+                        backgroundColor: "white",
+                        width: width - 40,
+                        borderColor: "#2E348B",
+                        borderRadius: 10,
+                        borderWidth: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRadius: 20
+                      }}
+                    >
+                      <Text style={{ color: "#2E348B" }}>{"Regisztráció"}</Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-          </ScrollView>
+            </ScrollView>
+          </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }

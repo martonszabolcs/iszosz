@@ -51,48 +51,28 @@ export default class Login extends Component<{}> {
       service: "",
       description: "",
       petName: "pet",
-      selectedItems: []
+      selectedItems: "",
+      token: this.props.token,
+      id: this.props.id
     };
-    this.getItem();
-  }
-  async getItem() {
-    try {
-      const values = await AsyncStorage.getItem("@eterkep:user");
-      if (values !== null) {
-        const value = JSON.parse(values);
-        this.setState({
-          userId: value.id,
-          token: value.token,
-          userName: value.name,
-          picture: value.picture
-        });
-        this.me();
-        console.log(this.state.image);
-      }
-    } catch (error) {
-      // Error retrieving data
-    }
   }
 
   news = async () => {
     let data = {
       method: "POST",
-      credentials: "same-origin",
-      mode: "same-origin",
-      body: JSON.stringify({
-        people: this.state.userName,
-        title: this.state.title,
-        content: this.state.content,
-        image: this.state.image
-      }),
+      body: "title=" + this.state.title + "&desc=" + this.state.desc,
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: this.state.token
       }
     };
-    return fetch("https://dry-mountain-15425.herokuapp.com/notes", data)
+    return fetch(
+      "https://iszosz.herokuapp.com/users/" + this.state.id + "/notes",
+      data
+    )
       .then(response => response.json())
       .then(responseJson => {
+        console.log(responseJson);
         Actions.home();
       })
       .catch(error => {
@@ -132,26 +112,17 @@ export default class Login extends Component<{}> {
       <View style={styles.container}>
         <View style={{ flex: 1 }}>
           <ScrollView>
-            <Animated.View // Special animatable View
+            <View
               style={{
-                ...this.props.style,
-                opacity: fadeAnim // Bind opacity to animated value
+                width: width,
+                height: width / 9,
+                backgroundColor: "transparent",
+                marginTop: 20,
+                flexDirection: "row",
+                justifyContent: "space-between"
               }}
             >
-              <View
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  paddingTop: 30
-                }}
-              >
-                <Text style={{ color: "black", fontSize: 30 }}>
-                  {"Új jegyzet"}
-                </Text>
-              </View>
-            </Animated.View>
-            <View style={{ width: width, height: width / 9 }}>
-              <TouchableOpacity onPress={() => Actions.pop()}>
+              <TouchableOpacity onPress={() => Actions.home()}>
                 <View
                   style={{
                     marginLeft: 20,
@@ -170,6 +141,32 @@ export default class Login extends Component<{}> {
                   />
                 </View>
               </TouchableOpacity>
+              <Animated.View // Special animatable View
+                style={{
+                  ...this.props.style,
+                  opacity: fadeAnim,
+                  alignItems: "center" // Bind opacity to animated value
+                }}
+              >
+                <View
+                  style={{
+                    marginTop: 10,
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}
+                >
+                  <Text style={{ color: "black", fontSize: 20 }}>
+                    {"Új jegyzet"}
+                  </Text>
+                </View>
+              </Animated.View>
+
+              <View
+                style={{
+                  height: width / 9,
+                  width: width / 9
+                }}
+              />
             </View>
 
             <View style={{ padding: 20, marginTop: height / 50, bottom: 10 }}>
@@ -205,8 +202,8 @@ export default class Login extends Component<{}> {
                   underlineColorAndroid="rgba(0,0,0,0)"
                   style={{ height: 120, textAlignVertical: "top" }}
                   multiline
-                  onChangeText={content => this.setState({ content })}
-                  value={this.state.content}
+                  onChangeText={desc => this.setState({ desc })}
+                  value={this.state.desc}
                 />
                 <View
                   style={{
@@ -268,7 +265,7 @@ export default class Login extends Component<{}> {
                   }}
                 >
                   <Text style={{ color: "#2E348B" }}>
-                    {"Jegyzet hozzáadása!"}
+                    {"Jegyzet hozzáadása"}
                   </Text>
                 </View>
               </TouchableOpacity>

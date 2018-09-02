@@ -154,7 +154,7 @@ export default class Bongeszes extends Component<{}> {
                 alignItems: "center"
               }}
             >
-              <Text style={{ color: "black", fontSize: 20 }}>
+              <Text style={{ color: "black", fontSize: 16 }}>
                 {"Tréning, tanácsadás"}
               </Text>
               <Image
@@ -176,7 +176,7 @@ export default class Bongeszes extends Component<{}> {
                 alignItems: "center"
               }}
             >
-              <Text style={{ color: "black", fontSize: 20 }}>
+              <Text style={{ color: "black", fontSize: 16 }}>
                 {"Projektmenedzsment"}
               </Text>
               <Image
@@ -199,7 +199,7 @@ export default class Bongeszes extends Component<{}> {
                 alignItems: "center"
               }}
             >
-              <Text style={{ color: "black", fontSize: 20 }}>
+              <Text style={{ color: "black", fontSize: 16 }}>
                 {"Táborszervezés"}
               </Text>
               <Image
@@ -222,7 +222,7 @@ export default class Bongeszes extends Component<{}> {
                 alignItems: "center"
               }}
             >
-              <Text style={{ color: "black", fontSize: 20 }}>
+              <Text style={{ color: "black", fontSize: 16 }}>
                 {"Rendezvényszervezés"}
               </Text>
               <Image
@@ -245,7 +245,7 @@ export default class Bongeszes extends Component<{}> {
                 alignItems: "center"
               }}
             >
-              <Text style={{ color: "black", fontSize: 20 }}>
+              <Text style={{ color: "black", fontSize: 16 }}>
                 {"Nemzetközi"}
               </Text>
               <Image
@@ -268,7 +268,7 @@ export default class Bongeszes extends Component<{}> {
                 alignItems: "center"
               }}
             >
-              <Text style={{ color: "black", fontSize: 20 }}>
+              <Text style={{ color: "black", fontSize: 16 }}>
                 {"Egyéb humán erőforrás"}
               </Text>
               <Image
@@ -296,7 +296,7 @@ export default class Bongeszes extends Component<{}> {
                 alignItems: "center"
               }}
             >
-              <Text style={{ color: "black", fontSize: 20 }}>
+              <Text style={{ color: "black", fontSize: 16 }}>
                 {"Elektronika"}
               </Text>
               <Image
@@ -319,7 +319,7 @@ export default class Bongeszes extends Component<{}> {
                 alignItems: "center"
               }}
             >
-              <Text style={{ color: "black", fontSize: 20 }}>
+              <Text style={{ color: "black", fontSize: 16 }}>
                 {"Bútor, irodai eszköz"}
               </Text>
               <Image
@@ -344,7 +344,7 @@ export default class Bongeszes extends Component<{}> {
                 alignItems: "center"
               }}
             >
-              <Text style={{ color: "black", fontSize: 20 }}>
+              <Text style={{ color: "black", fontSize: 16 }}>
                 {"Játék, sport és tréning eszköz"}
               </Text>
               <Image
@@ -367,7 +367,7 @@ export default class Bongeszes extends Component<{}> {
                 alignItems: "center"
               }}
             >
-              <Text style={{ color: "black", fontSize: 20 }}>
+              <Text style={{ color: "black", fontSize: 16 }}>
                 {"Egyéb tárgyi erőforrás"}
               </Text>
               <Image
@@ -395,7 +395,7 @@ export default class Bongeszes extends Component<{}> {
                 alignItems: "center"
               }}
             >
-              <Text style={{ color: "black", fontSize: 20 }}>
+              <Text style={{ color: "black", fontSize: 16 }}>
                 {"Helyszín, logisztika"}
               </Text>
               <Image
@@ -421,7 +421,7 @@ export default class Bongeszes extends Component<{}> {
                 alignItems: "center"
               }}
             >
-              <Text style={{ color: "black", fontSize: 20 }}>
+              <Text style={{ color: "black", fontSize: 16 }}>
                 {"Szolgáltatás fiataloknak"}
               </Text>
               <Image
@@ -446,7 +446,7 @@ export default class Bongeszes extends Component<{}> {
                 alignItems: "center"
               }}
             >
-              <Text style={{ color: "black", fontSize: 20 }}>
+              <Text style={{ color: "black", fontSize: 16 }}>
                 {"Szolgáltatás szakembereknek"}
               </Text>
               <Image
@@ -497,7 +497,7 @@ export default class Bongeszes extends Component<{}> {
             <Text
               style={{
                 color: "white",
-                fontSize: width / 12,
+                fontSize: width / 20,
                 textAlign: "center"
               }}
             >
@@ -567,7 +567,7 @@ export default class Bongeszes extends Component<{}> {
                   source={require("../src/menu/hum.png")}
                   style={{ width: width / 7, height: width / 7 }}
                 />
-                <Text>Humán erőforrás</Text>
+                <Text style={{ fontSize: 12 }}>Humán erőforrás</Text>
               </View>
             </TouchableOpacity>
 
@@ -577,7 +577,7 @@ export default class Bongeszes extends Component<{}> {
                   source={require("../src/menu/targy.png")}
                   style={{ width: width / 7, height: width / 7 }}
                 />
-                <Text>Tárgyi erőforrás</Text>
+                <Text style={{ fontSize: 12 }}>Tárgyi erőforrás</Text>
               </View>
             </TouchableOpacity>
 
@@ -587,7 +587,7 @@ export default class Bongeszes extends Component<{}> {
                   source={require("../src/menu/szolg.png")}
                   style={{ width: width / 7, height: width / 7 }}
                 />
-                <Text>Szolgáltatások</Text>
+                <Text style={{ fontSize: 12 }}>Szolgáltatások</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -654,7 +654,7 @@ const styles = StyleSheet.create({
   text: {
     textAlign: "center",
     color: "white",
-    fontSize: 40
+    fontSize: 30
     //fontWeight: 'bold',
   }
 });

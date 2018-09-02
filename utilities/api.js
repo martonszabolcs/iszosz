@@ -1,12 +1,24 @@
 var api = {
   lista() {
-    return fetch("https://dry-mountain-15425.herokuapp.com/notes", {
+    return fetch("https://iszosz.herokuapp.com/notes", {
       headers: {
-        limit: 5,
-        q: "Szabi"
+        limit: 50
       }
     }).then(lista => lista.json());
     console.log(lista);
+  },
+  logout() {
+    return fetch("https://iszosz.herokuapp.com/users/1/logout", {}).then(
+      logout => logout.json()
+    );
+    console.log(logout);
+  },
+  users() {
+    return fetch("https://iszosz.herokuapp.com/users", {
+      method: "GET",
+      headers: {}
+    }).then(users => users.json());
+    console.log(users);
   },
   me(token) {
     return fetch("https://dry-mountain-15425.herokuapp.com/users/me", {
