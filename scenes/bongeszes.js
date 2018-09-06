@@ -556,6 +556,7 @@ export default class Bongeszes extends Component<{}> {
                 width: width,
                 height: width / 5,
                 marginTop: 10,
+                paddingTop: 8,
                 justifyContent: "space-around",
                 alignItems: "center"
               }
@@ -565,7 +566,7 @@ export default class Bongeszes extends Component<{}> {
               <View style={[styles.menu1]}>
                 <Image
                   source={require("../src/menu/hum.png")}
-                  style={{ width: width / 7, height: width / 7 }}
+                  style={{ width: width / 8, height: width / 8 }}
                 />
                 <Text style={{ fontSize: 12 }}>Humán erőforrás</Text>
               </View>
@@ -575,7 +576,7 @@ export default class Bongeszes extends Component<{}> {
               <View style={[styles.menu1]}>
                 <Image
                   source={require("../src/menu/targy.png")}
-                  style={{ width: width / 7, height: width / 7 }}
+                  style={{ width: width / 8, height: width / 8 }}
                 />
                 <Text style={{ fontSize: 12 }}>Tárgyi erőforrás</Text>
               </View>
@@ -585,7 +586,7 @@ export default class Bongeszes extends Component<{}> {
               <View style={[styles.menu1]}>
                 <Image
                   source={require("../src/menu/szolg.png")}
-                  style={{ width: width / 7, height: width / 7 }}
+                  style={{ width: width / 8, height: width / 8 }}
                 />
                 <Text style={{ fontSize: 12 }}>Szolgáltatások</Text>
               </View>

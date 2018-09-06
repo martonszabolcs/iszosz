@@ -182,7 +182,7 @@ export default class Login extends Component<{}> {
   image() {
     ImagePicker.openPicker({
       width: 300,
-      height: 400,
+      height: 300,
       cropping: true,
       cropperCircleOverlay: true
     }).then(image => {
@@ -197,7 +197,7 @@ export default class Login extends Component<{}> {
       return (
         <Image
           source={{ uri: this.state.imagePath }}
-          style={{ width: 300, height: 400, margin: 20 }}
+          style={{ width: 300, height: 300, margin: 20, borderRadius: 30 }}
         />
       );
     }

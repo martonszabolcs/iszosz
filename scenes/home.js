@@ -49,17 +49,42 @@ export default class Home extends Component<{}> {
       results: "",
       menuOpen: false,
       modalVisible: false,
+      modalVisible2: false,
       index: 0,
       petName: "",
       id: "",
       canavasOpen: this.props.canavasOpen,
       token: "",
-      lista: []
+      tabbar: "left",
+      lista: [],
+      products: []
     };
     this.dataSource = new ListView.DataSource({
       rowHasChanged: (r1, r2) => r1.guid != r2.guid
     });
     this._storeData();
+  }
+
+  getProducts() {
+    console.log(this.state.token);
+    let data = {
+      method: "GET",
+      headers: {
+        Authorization: this.state.token
+      }
+    };
+    return fetch("https://iszosz.herokuapp.com/products", data)
+      .then(notes => notes.json())
+      .then(products => {
+        this.setState({
+          products: products
+        });
+        console.log(this.state.products);
+      })
+      .catch(error => {
+        Actions.login();
+        Alert.alert("Hiba történt!", "Jelentkezz be újra");
+      });
   }
 
   _storeData = async () => {
@@ -114,9 +139,13 @@ export default class Home extends Component<{}> {
         .then(notes => notes.json())
         .then(lista => {
           this.setState({
-            lista: lista
+            lista: lista.reverse()
           });
           console.log(this.state.lista);
+        })
+        .catch(error => {
+          Actions.login();
+          Alert.alert("Hiba történt!", "Jelentkezz be újra");
         });
     }, 200);
   }
@@ -142,8 +171,286 @@ export default class Home extends Component<{}> {
   toggleModal(visible) {
     this.setState({ modalVisible: visible });
   }
+  available(available) {
+    if (available) {
+      return "#309272";
+    } else {
+      return "#914646";
+    }
+  }
+
+  faliujsag() {
+    if (this.state.tabbar == "left") {
+      return (
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center"
+          }}
+        >
+          <ScrollView
+            removeClippedSubviews={true}
+            style={{ backgroundColor: "transparent" }}
+          >
+            <ListView
+              dataSource={this.dataSource.cloneWithRows(this.state.lista)}
+              enableEmptySections={true}
+              initialListSize={0}
+              contentContainerStyle={styles.list}
+              scrollEnabled={true}
+              pageSize={2}
+              renderRow={(rowData, sectionID, rowID, highlightRow) => (
+                <View
+                  numberOfLines={1}
+                  style={{ backgroundColor: "transparent" }}
+                >
+                  <View style={{ marginTop: 10 }}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        Actions.jegyzetReszletes({
+                          note: rowData
+                        });
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: width / 1.5,
+                          backgroundColor: "transparent",
+                          alignItems: "center",
+                          marginLeft: 20,
+                          marginRight: 20,
+                          flexDirection: "row",
+                          top: 30,
+                          zIndex: 100,
+                          backgroundColor: "white"
+                        }}
+                      >
+                        <Image
+                          style={{
+                            width: width / 6,
+                            height: width / 6,
+                            borderRadius: 30
+                          }}
+                          source={{
+                            uri: rowData.userImageUrl
+                          }}
+                        />
+                        <Text
+                          numberOfLines={1}
+                          style={[
+                            styles.cim,
+                            {
+                              color: "black",
+                              marginLeft: 5,
+                              marginTop: 5,
+                              marginRight: 5,
+                              fontSize: 18,
+                              fontWeight: "bold"
+                            }
+                          ]}
+                        >
+                          {rowData.userName}
+                        </Text>
+                      </View>
+
+                      <View
+                        style={{
+                          backgroundColor: "white",
+                          width: width - 40,
+                          height: width / 3,
+                          borderRadius: 10,
+                          borderWidth: 1,
+                          borderColor: "#309272",
+                          flexDirection: "row"
+                        }}
+                      >
+                        <View style={{ flex: 1 }}>
+                          <Text
+                            numberOfLines={3}
+                            style={[
+                              styles.cim,
+                              {
+                                color: "black",
+                                padding: 10,
+                                fontSize: 14,
+                                top: 30
+                              }
+                            ]}
+                          >
+                            {rowData.desc}
+                          </Text>
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              )}
+            />
+            <View style={{ height: 200 }} />
+          </ScrollView>
+        </View>
+      );
+    } else {
+      return (
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center"
+          }}
+        >
+          <ScrollView
+            removeClippedSubviews={true}
+            style={{ backgroundColor: "transparent" }}
+          >
+            <View
+              style={{
+                width: width - 10,
+                backgroundColor: "white",
+                borderRadius: 10,
+                borderWidth: 1,
+                padding: 5,
+                borderColor: "gray",
+                marginLeft: 5,
+                marginTop: 5,
+                marginRight: 5,
+                justifyContent: "center",
+                alignItems: "center"
+              }}
+            >
+              <Text style={{ fontSize: 14, textAlign: "center" }}>
+                {" "}
+                Ha egy erőforrás kerete piros akkor jelenleg foglalt, ha zöld
+                akkor szabad{" "}
+              </Text>
+            </View>
+            <ListView
+              dataSource={this.dataSource.cloneWithRows(this.state.products)}
+              enableEmptySections={true}
+              initialListSize={0}
+              contentContainerStyle={styles.list}
+              scrollEnabled={true}
+              pageSize={2}
+              renderRow={(rowData, sectionID, rowID, highlightRow) => (
+                <View
+                  numberOfLines={1}
+                  style={{ backgroundColor: "transparent" }}
+                >
+                  <View style={{ marginTop: 10 }}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        alert("megnyomtad");
+                      }}
+                    >
+                      <View
+                        style={{
+                          backgroundColor: "white",
+                          borderColor: this.available(rowData.available),
+                          borderWidth: 1,
+                          borderRadius: 10,
+                          width: width / 2 - 10,
+                          height: height / 3
+                        }}
+                      >
+                        <Image
+                          resizeMode="cover"
+                          source={{ uri: rowData.imageURL }}
+                          style={{
+                            width: width / 2 - 10,
+                            height: height / 6,
+                            zIndex: 100,
+                            borderRadius: 10
+                          }}
+                        />
+                        <Text
+                          numberOfLines={2}
+                          style={[
+                            styles.cim,
+                            {
+                              color: "black",
+                              marginLeft: 5,
+                              marginTop: 5,
+                              marginRight: 5,
+                              textAlign: "center",
+                              fontWeight: "bold",
+                              fontSize: 14
+                            }
+                          ]}
+                        >
+                          {rowData.title}
+                        </Text>
+                        <Text
+                          numberOfLines={4}
+                          style={[
+                            styles.cim,
+                            {
+                              color: "black",
+                              marginLeft: 5,
+                              marginTop: 5,
+                              marginRight: 5,
+                              textAlign: "center",
+                              fontSize: 12
+                            }
+                          ]}
+                        >
+                          {rowData.desc}
+                        </Text>
+                        <View
+                          style={{
+                            backgroundColor: this.available(rowData.available),
+                            borderRadius: 10,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            position: "absolute",
+                            bottom: 0
+                          }}
+                        >
+                          <Text
+                            numberOfLines={4}
+                            style={[
+                              styles.cim,
+                              {
+                                color: "white",
+                                paddingLeft: 10,
+                                paddingRight: 10,
+                                textAlign: "center",
+                                fontSize: 12
+                              }
+                            ]}
+                          >
+                            {rowData.userName}
+                          </Text>
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              )}
+            />
+            <View style={{ height: 200 }} />
+          </ScrollView>
+        </View>
+      );
+    }
+  }
 
   render() {
+    console.log(this.state.tabbar);
+    if (this.state.tabbar == "left") {
+      var textFaliujsag = "#2A9371";
+      var backgroundFaliujsag = "white";
+      var textUjtermek = "white";
+      var backgroundUjtermek = "#2A9371";
+    } else {
+      var textFaliujsag = "white";
+      var backgroundFaliujsag = "#2A9371";
+      var textUjtermek = "#2A9371";
+      var backgroundUjtermek = "white";
+    }
+
     var { height, width } = Dimensions.get("window");
     var iWidth = width / 240;
     var cornerLeft = width - 10; // 10 is the width/height of the corner
@@ -162,12 +469,7 @@ export default class Home extends Component<{}> {
           color="white"
         />
         <TouchableHighlight
-          onPress={() =>
-            Actions.jegyzet({
-              id: this.state.id,
-              token: this.state.token
-            })
-          }
+          onPress={() => this.setState({ modalVisible2: true })}
           underlayColor="transparent"
           style={[
             styles.newFlight,
@@ -179,6 +481,110 @@ export default class Home extends Component<{}> {
             source={require("../src/plus.png")}
           />
         </TouchableHighlight>
+        <Modal
+          animationType={"fade"}
+          transparent={true}
+          visible={this.state.modalVisible2}
+          onRequestClose={() => {
+            console.log("Modal has been closed.");
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "rgba(0, 0, 0, 0.6)",
+              width: width,
+              height: height,
+              justifyContent: "center",
+              alignItems: "center"
+            }}
+          >
+            <View
+              style={{
+                width: width / 1.5,
+                height: width / 1.5,
+                backgroundColor: "white",
+                justifyContent: "center",
+                alignItems: "center"
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  Actions.jegyzet({
+                    id: this.state.id,
+                    token: this.state.token
+                  });
+                  this.setState({ modalVisible2: false });
+                }}
+              >
+                <View
+                  style={{
+                    width: width / 2,
+                    height: width / 9,
+                    backgroundColor: "#309272",
+                    justifyContent: "center",
+                    borderRadius: 10,
+                    alignItems: "center",
+                    marginTop: height / 20
+                  }}
+                >
+                  <Text style={{ color: "white", fontSize: 15 }}>
+                    {" "}
+                    Új jegyzet a faliújságra{" "}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => {
+                  Actions.jegyzet({
+                    id: this.state.id,
+                    token: this.state.token
+                  });
+                  this.setState({ modalVisible2: false });
+                }}
+              >
+                <View
+                  style={{
+                    width: width / 2,
+                    height: width / 9,
+                    backgroundColor: "#914646",
+                    justifyContent: "center",
+                    borderRadius: 10,
+                    alignItems: "center",
+                    marginTop: height / 20
+                  }}
+                >
+                  <Text style={{ color: "white", fontSize: 15 }}>
+                    {" "}
+                    Új erőforrás feltöltése{" "}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({ modalVisible2: false });
+                }}
+              >
+                <View
+                  style={{
+                    width: width / 2,
+                    height: width / 9,
+                    backgroundColor: "white",
+                    justifyContent: "center",
+                    borderRadius: 10,
+                    alignItems: "center",
+                    marginTop: height / 20
+                  }}
+                >
+                  <Text style={{ color: "#914646", fontSize: 15 }}>
+                    {" "}
+                    Mégse{" "}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
         <Modal
           animationType={"slide"}
           transparent={false}
@@ -539,128 +945,67 @@ export default class Home extends Component<{}> {
               </Text>
             </View>
           </View>
-
           <View
             style={{
-              flex: 1,
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center"
+              width: width,
+              height: 25,
+              backgroundColor: "#2A9371",
+              justifyContent: "space-around",
+              alignItems: "center",
+              flexDirection: "row"
             }}
           >
-            <ScrollView
-              removeClippedSubviews={true}
-              style={{ backgroundColor: "transparent" }}
+            <TouchableOpacity
+              onPress={() => {
+                this.setState({ tabbar: "left" });
+              }}
             >
-              <ListView
-                dataSource={this.dataSource.cloneWithRows(this.state.lista)}
-                enableEmptySections={true}
-                initialListSize={0}
-                contentContainerStyle={styles.list}
-                scrollEnabled={true}
-                pageSize={2}
-                renderRow={(rowData, sectionID, rowID, highlightRow) => (
-                  <View
-                    numberOfLines={1}
-                    style={{ backgroundColor: "transparent" }}
-                  >
-                    <View style={{ marginTop: 10 }}>
-                      <TouchableOpacity
-                        onPress={() => {
-                          Actions.jegyzetReszletes({
-                            note: rowData
-                          });
-                        }}
-                      >
-                        <View
-                          style={{
-                            backgroundColor: "white",
-                            width: width - 40,
-                            height: width / 5 + 20,
-                            borderRadius: 10,
-                            borderWidth: 1,
-                            borderColor: "#D3D3D3",
-                            flexDirection: "row"
-                          }}
-                        >
-                          <View
-                            style={{
-                              width: width / 6 + 20,
-                              borderRadius: 10,
-                              backgroundColor: "#2A9371",
-                              justifyContent: "center"
-                            }}
-                          >
-                            <Image
-                              style={{
-                                width: width / 6 + 20,
-                                height: width / 5.2,
-                                borderRadius: 10
-                              }}
-                              source={{
-                                uri: rowData.userImageUrl
-                              }}
-                            />
-                            <Text
-                              numberOfLines={1}
-                              style={[
-                                styles.cim,
-                                {
-                                  color: "white",
-                                  marginLeft: 5,
-                                  fontWeight: "bold",
-                                  marginTop: 5,
-                                  marginRight: 5,
-                                  textAlign: "center",
-                                  fontSize: 12
-                                }
-                              ]}
-                            >
-                              {rowData.userName}
-                            </Text>
-                          </View>
-                          <View style={{ flex: 1 }}>
-                            <Text
-                              numberOfLines={1}
-                              style={[
-                                styles.cim,
-                                {
-                                  color: "black",
-                                  marginLeft: 5,
-                                  marginTop: 5,
-                                  marginRight: 5,
-                                  fontSize: 18,
-                                  fontWeight: "bold"
-                                }
-                              ]}
-                            >
-                              {rowData.title}
-                            </Text>
-                            <Text
-                              numberOfLines={3}
-                              style={[
-                                styles.cim,
-                                {
-                                  color: "black",
-                                  marginLeft: 5,
-                                  marginTop: 5,
-                                  marginRight: 5,
-                                  fontSize: 12
-                                }
-                              ]}
-                            >
-                              {rowData.desc}
-                            </Text>
-                          </View>
-                        </View>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                )}
-              />
-              <View style={{ height: 100 }} />
-            </ScrollView>
+              <View
+                style={{
+                  backgroundColor: backgroundFaliujsag,
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  width: width / 2,
+                  borderTopLeftRadius: 10,
+                  borderTopRightRadius: 10,
+                  paddingTop: 2,
+                  height: 25
+                }}
+              >
+                <Text style={{ color: textFaliujsag, fontSize: 16 }}>
+                  {" "}
+                  Faliújság{" "}
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                this.setState({ tabbar: "right" });
+                this.getProducts();
+              }}
+            >
+              <View
+                style={{
+                  backgroundColor: backgroundUjtermek,
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  width: width / 2,
+                  borderTopLeftRadius: 10,
+                  borderTopRightRadius: 10,
+                  paddingTop: 2,
+                  height: 25
+                }}
+              >
+                <Text style={{ color: textUjtermek, fontSize: 16 }}>
+                  {" "}
+                  Új erőforrások{" "}
+                </Text>
+              </View>
+            </TouchableOpacity>
           </View>
+
+          {this.faliujsag()}
         </View>
 
         <View

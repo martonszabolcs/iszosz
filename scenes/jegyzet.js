@@ -67,7 +67,7 @@ export default class Login extends Component<{}> {
       }
     };
     return fetch(
-      "https://iszosz.herokuapp.com/users/" + this.state.id + "/notes",
+      "https://iszosz.herokuapp.com/users/" + this.state.id + "/notes/",
       data
     )
       .then(response => response.json())
@@ -156,7 +156,7 @@ export default class Login extends Component<{}> {
                   }}
                 >
                   <Text style={{ color: "black", fontSize: 20 }}>
-                    {"Új jegyzet"}
+                    {"Új poszt a faliújságra"}
                   </Text>
                 </View>
               </Animated.View>
@@ -171,7 +171,7 @@ export default class Login extends Component<{}> {
 
             <View style={{ padding: 20, marginTop: height / 50, bottom: 10 }}>
               <View>
-                <View>
+                {/*<View>
                   <Text style={{ fontSize: 12, color: "gray" }}>
                     {"Jegyzet címe"}
                   </Text>
@@ -192,9 +192,9 @@ export default class Login extends Component<{}> {
                       top: -10
                     }}
                   />
-                </View>
+                </View>*/}
 
-                <Text style={{ fontSize: 12, color: "gray" }}>{"Leírás"}</Text>
+                <Text style={{ fontSize: 12, color: "gray" }}>{"Szöveg:"}</Text>
                 <TextInput
                   ref="FirstInput"
                   returnKeyType="go"

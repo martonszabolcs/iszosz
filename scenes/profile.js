@@ -127,7 +127,7 @@ export default class Login extends Component<{}> {
   image() {
     ImagePicker.openPicker({
       width: 300,
-      height: 400,
+      height: 300,
       cropping: true,
       cropperCircleOverlay: true
     }).then(image => {
@@ -345,7 +345,11 @@ export default class Login extends Component<{}> {
                 >
                   <Image
                     source={require("../src/backs.png")}
-                    style={{ width: width / 12, height: width / 12 }}
+                    style={{
+                      width: width / 12,
+                      height: width / 12,
+                      borderRadius: 30
+                    }}
                   />
                 </View>
               </TouchableOpacity>
