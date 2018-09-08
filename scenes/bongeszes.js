@@ -143,7 +143,7 @@ export default class Bongeszes extends Component<{}> {
         <ScrollView>
           <TouchableOpacity
             onPress={() =>
-              Actions.adatlap({ tipus: 1, keywords: "Tréning, tanácsadás" })
+              Actions.adatlap({ category: 1, keywords: "Tréning, tanácsadás" })
             }
           >
             <View
@@ -165,7 +165,7 @@ export default class Bongeszes extends Component<{}> {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() =>
-              Actions.adatlap({ tipus: 1, keywords: "Projektmenedzsment" })
+              Actions.adatlap({ category: 2, keywords: "Projektmenedzsment" })
             }
           >
             <View
@@ -188,7 +188,7 @@ export default class Bongeszes extends Component<{}> {
 
           <TouchableOpacity
             onPress={() =>
-              Actions.adatlap({ tipus: 1, keywords: "Táborszervezés" })
+              Actions.adatlap({ category: 3, keywords: "Táborszervezés" })
             }
           >
             <View
@@ -211,7 +211,7 @@ export default class Bongeszes extends Component<{}> {
 
           <TouchableOpacity
             onPress={() =>
-              Actions.adatlap({ tipus: 1, keywords: "Rendezvényszervezés" })
+              Actions.adatlap({ category: 4, keywords: "Rendezvényszervezés" })
             }
           >
             <View
@@ -234,7 +234,7 @@ export default class Bongeszes extends Component<{}> {
 
           <TouchableOpacity
             onPress={() =>
-              Actions.adatlap({ tipus: 1, keywords: "Nemzetközi" })
+              Actions.adatlap({ category: 5, keywords: "Nemzetközi" })
             }
           >
             <View
@@ -257,7 +257,10 @@ export default class Bongeszes extends Component<{}> {
 
           <TouchableOpacity
             onPress={() =>
-              Actions.adatlap({ tipus: 1, keywords: "Egyéb humán erőforrás" })
+              Actions.adatlap({
+                category: 6,
+                keywords: "Egyéb humán erőforrás"
+              })
             }
           >
             <View
@@ -285,7 +288,7 @@ export default class Bongeszes extends Component<{}> {
         <ScrollView>
           <TouchableOpacity
             onPress={() =>
-              Actions.adatlap({ tipus: 2, keywords: "Elektronika" })
+              Actions.adatlap({ category: 7, keywords: "Elektronika" })
             }
           >
             <View
@@ -308,7 +311,7 @@ export default class Bongeszes extends Component<{}> {
 
           <TouchableOpacity
             onPress={() =>
-              Actions.adatlap({ tipus: 2, keywords: "Bútor, irodai eszköz" })
+              Actions.adatlap({ category: 8, keywords: "Bútor, irodai eszköz" })
             }
           >
             <View
@@ -331,7 +334,7 @@ export default class Bongeszes extends Component<{}> {
           <TouchableOpacity
             onPress={() =>
               Actions.adatlap({
-                tipus: 2,
+                category: 9,
                 keywords: "Játék, sport és tréning eszköz"
               })
             }
@@ -356,7 +359,10 @@ export default class Bongeszes extends Component<{}> {
 
           <TouchableOpacity
             onPress={() =>
-              Actions.adatlap({ tipus: 2, keywords: "Egyéb tárgyi erőforrás" })
+              Actions.adatlap({
+                category: 10,
+                keywords: "Egyéb tárgyi erőforrás"
+              })
             }
           >
             <View
@@ -384,7 +390,10 @@ export default class Bongeszes extends Component<{}> {
         <ScrollView>
           <TouchableOpacity
             onPress={() =>
-              Actions.adatlap({ tipus: 3, keywords: "Helyszín, logisztika" })
+              Actions.adatlap({
+                category: 11,
+                keywords: "Helyszín, logisztika"
+              })
             }
           >
             <View
@@ -408,7 +417,7 @@ export default class Bongeszes extends Component<{}> {
           <TouchableOpacity
             onPress={() =>
               Actions.adatlap({
-                tipus: 3,
+                category: 12,
                 keywords: "Szolgáltatás fiataloknak"
               })
             }
@@ -433,7 +442,7 @@ export default class Bongeszes extends Component<{}> {
           <TouchableOpacity
             onPress={() =>
               Actions.adatlap({
-                tipus: 3,
+                category: 13,
                 keywords: "Szolgáltatás szakembereknek"
               })
             }

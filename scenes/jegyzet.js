@@ -64,7 +64,7 @@ export default class Login extends Component<{}> {
     } else {
       let data = {
         method: "POST",
-        body: "title=" + this.state.title + "&desc=" + this.state.desc,
+        body: "desc=" + this.state.desc,
         headers: {
           "Content-Type": "application/x-www-form-urlencoded"
         }

@@ -62,6 +62,9 @@ export default class Login extends Component<{}> {
   }
 
   reg = async () => {
+    var email = this.state.email;
+    var low = email.toLowerCase();
+    this.setState({ email: low });
     if (
       this.state.password == "" ||
       this.state.email == "" ||
@@ -156,7 +159,7 @@ export default class Login extends Component<{}> {
           this.setState({ indicator: false });
         } else {
           this.setState({ indicator: false });
-          Alert("Sikeres regisztráció!", "");
+          Alert.alert("Sikeres regisztráció!", "");
           Actions.login();
         }
       });

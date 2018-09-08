@@ -41,7 +41,9 @@ export default class NotesZoom extends Component<{}> {
       content: this.props.content,
       id: this.props.id,
       note: this.props.info,
-      user: this.props.info.owner
+      user: this.props.info.owner,
+      bongeszes: this.props.bongeszes,
+      keywords: this.props.keywords
     };
     console.log(this.state.id);
     this._storeData();
@@ -73,7 +75,7 @@ export default class NotesZoom extends Component<{}> {
     return fetch(
       "https://iszosz.herokuapp.com/users/" +
         this.state.id +
-        "/product/" +
+        "/products/" +
         this.state.note.id,
       data
     )
@@ -152,6 +154,17 @@ export default class NotesZoom extends Component<{}> {
       Alert.alert("Hibás jelszó", "Kérjük, próbálja újra!");
     }
   }
+  back() {
+    console.log(this.state.bongeszes);
+    if (this.state.bongeszes > 0) {
+      Actions.adatlap({
+        category: this.state.bongeszes,
+        keywords: this.state.keywords
+      });
+    } else {
+      Actions.home({ oldal: "right" });
+    }
+  }
 
   render() {
     let { fadeAnim } = this.state;
@@ -179,9 +192,7 @@ export default class NotesZoom extends Component<{}> {
                 justifyContent: "space-between"
               }}
             >
-              <TouchableOpacity
-                onPress={() => Actions.home({ oldal: "right" })}
-              >
+              <TouchableOpacity onPress={() => this.back()}>
                 <View
                   style={{
                     marginLeft: 20,

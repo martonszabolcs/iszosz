@@ -258,9 +258,9 @@ export default class Find extends Component<{}> {
                     >
                       <View
                         style={{
-                          backgroundColor: "#D3D3D3",
+                          backgroundColor: "#2F3590",
                           width: width / 2 - 10,
-                          height: height / 3,
+                          height: height / 4,
                           borderRadius: 10
                         }}
                       >
@@ -279,11 +279,12 @@ export default class Find extends Component<{}> {
                           style={[
                             styles.cim,
                             {
-                              color: "black",
+                              color: "white",
                               marginLeft: 5,
                               marginTop: 5,
                               marginRight: 5,
                               textAlign: "center",
+                              fontWeight: "bold",
                               fontSize: 12
                             }
                           ]}
@@ -295,7 +296,7 @@ export default class Find extends Component<{}> {
                           style={[
                             styles.cim,
                             {
-                              color: "black",
+                              color: "white",
                               marginLeft: 5,
                               marginTop: 5,
                               marginRight: 5,

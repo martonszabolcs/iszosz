@@ -20,13 +20,17 @@ import {
   Alert,
   Easing,
   DrawerLayoutAndroid,
+  AppState,
   ViewPagerAndroid
 } from "react-native";
 
 import OneSignal from "react-native-onesignal"; // Import package from node modules
 
 import { Router, Scene, Actions } from "react-native-router-flux";
+import moment from "moment";
 import api from "../utilities/api";
+import localization from "moment/locale/hu";
+
 import * as Keychain from "react-native-keychain";
 const SideMenu = require("react-native-side-menu");
 import ModalActivityIndicator from "react-native-modal-activityindicator";
@@ -67,6 +71,9 @@ export default class Home extends Component<{}> {
       rowHasChanged: (r1, r2) => r1.guid != r2.guid
     });
     this._storeData();
+    moment()
+      .locale("hu", localization)
+      .format("LLL");
   }
 
   getProducts() {
@@ -151,6 +158,20 @@ export default class Home extends Component<{}> {
   }
 
   componentDidMount() {
+    this.getNotes();
+    AppState.addEventListener("change", state => {
+      if (state === "active") {
+        this.setState({ lista: [], products: [], indicator: true });
+        this.getProducts();
+        this.getNotes();
+      }
+      if (state === "background") {
+        console.log("background");
+      }
+    });
+  }
+
+  getNotes() {
     setTimeout(() => {
       console.log(this.state.token);
       let data = {
@@ -162,6 +183,7 @@ export default class Home extends Component<{}> {
       return fetch("https://iszosz.herokuapp.com/notes", data)
         .then(notes => notes.json())
         .then(lista => {
+          this.setState({ indicator: false });
           if (lista.hasOwnProperty("error")) {
             AsyncStorage.setItem("@eterkep:userData", "");
 
@@ -173,6 +195,7 @@ export default class Home extends Component<{}> {
           console.log(this.state.lista);
         })
         .catch(error => {
+          this.setState({ indicator: false });
           Actions.login();
           AsyncStorage.setItem("@eterkep:userData", "");
 
@@ -326,7 +349,7 @@ export default class Home extends Component<{}> {
                           flexDirection: "row"
                         }}
                       >
-                        <View style={{ flex: 1 }}>
+                        <View style={{ height: width / 3 }}>
                           <Text
                             numberOfLines={3}
                             style={[
@@ -334,12 +357,31 @@ export default class Home extends Component<{}> {
                               {
                                 color: "black",
                                 padding: 10,
+                                paddingLeft: 15,
                                 fontSize: 14,
                                 top: 30
                               }
                             ]}
                           >
                             {rowData.desc}
+                          </Text>
+                          <Text
+                            numberOfLines={1}
+                            style={[
+                              styles.cim,
+                              {
+                                color: "gray",
+                                marginLeft: 10,
+                                fontSize: 14,
+                                marginTop: 20,
+                                position: "absolute",
+                                bottom: 5,
+                                width: width / 2,
+                                left: 5
+                              }
+                            ]}
+                          >
+                            {moment(Number(rowData.date)).fromNow()}
                           </Text>
                         </View>
                       </View>
@@ -442,7 +484,7 @@ export default class Home extends Component<{}> {
                           {rowData.title}
                         </Text>
                         <Text
-                          numberOfLines={4}
+                          numberOfLines={2}
                           style={[
                             styles.cim,
                             {
@@ -457,6 +499,23 @@ export default class Home extends Component<{}> {
                         >
                           {rowData.desc}
                         </Text>
+                        <Text
+                          numberOfLines={1}
+                          style={[
+                            styles.cim,
+                            {
+                              color: "gray",
+                              paddingLeft: 10,
+                              fontSize: 14,
+                              marginTop: 20,
+                              position: "absolute",
+                              bottom: 0,
+                              left: 0
+                            }
+                          ]}
+                        >
+                          {moment(Number(rowData.date)).fromNow()}
+                        </Text>
                         <View
                           style={{
                             backgroundColor: this.available(rowData.available),
@@ -464,7 +523,8 @@ export default class Home extends Component<{}> {
                             justifyContent: "center",
                             alignItems: "center",
                             position: "absolute",
-                            bottom: 0
+                            bottom: 0,
+                            right: 0
                           }}
                         >
                           <Text
@@ -980,7 +1040,7 @@ export default class Home extends Component<{}> {
               <View style={[styles.menu1]}>
                 <Image
                   source={require("../src/logout.png")}
-                  style={{ width: width / 10, height: width / 10 }}
+                  style={{ width: width / 15, height: width / 15 }}
                 />
               </View>
             </TouchableOpacity>
@@ -989,19 +1049,29 @@ export default class Home extends Component<{}> {
               {"Szia " + this.state.petName + "!"}
             </Text>
 
-            <View
-              style={{
-                width: width / 10,
-                height: width / 10,
-                justifyContent: "center",
-                alignItems: "center"
-              }}
-            >
-              <Text
-                style={{ color: "white", fontSize: 11, textAlign: "right" }}
+            <View style={[styles.menu1]}>
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({ lista: [], products: [], indicator: true });
+                  this.getProducts();
+                  this.getNotes();
+                }}
               >
-                {"id:" + this.state.id}
-              </Text>
+                <View
+                  style={{
+                    alignItems: "center",
+                    borderBottomLeftRadius: 10,
+                    borderBottomRightRadius: 10,
+                    borderWidth: 0.6,
+                    borderColor: "gray"
+                  }}
+                >
+                  <Image
+                    source={require("../src/refresh.png")}
+                    style={{ width: width / 15, height: width / 15 }}
+                  />
+                </View>
+              </TouchableOpacity>
             </View>
           </View>
           <View

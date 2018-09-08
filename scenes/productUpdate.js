@@ -119,7 +119,7 @@ export default class Product extends Component<{}> {
         }
       };
       return fetch(
-        "https://iszosz.herokuapp.com/users/" + this.state.id + "/product/",
+        "https://iszosz.herokuapp.com/users/" + this.state.id + "/products/",
         data
       )
         .then(response => response.json())
@@ -149,7 +149,7 @@ export default class Product extends Component<{}> {
     var url =
       "https://iszosz.herokuapp.com/users/" +
       this.state.id +
-      "/product/" +
+      "/products" +
       res +
       "/p";
     const data = new FormData();
