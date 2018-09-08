@@ -224,7 +224,7 @@ export default class FindReszletes extends Component<{}> {
           >
             <View
               style={{
-                backgroundColor: "#D3D3D3",
+                backgroundColor: "white",
                 justifyContent: "center",
                 alignItems: "center",
                 width: width,

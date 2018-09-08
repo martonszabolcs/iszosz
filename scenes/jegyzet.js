@@ -39,6 +39,7 @@ export default class Login extends Component<{}> {
       fadeAnim: new Animated.Value(0),
       password: "",
       email: "",
+      desc: "",
       name: "",
       city: "",
       access_token: "",
@@ -58,26 +59,29 @@ export default class Login extends Component<{}> {
   }
 
   news = async () => {
-    let data = {
-      method: "POST",
-      body: "title=" + this.state.title + "&desc=" + this.state.desc,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: this.state.token
-      }
-    };
-    return fetch(
-      "https://iszosz.herokuapp.com/users/" + this.state.id + "/notes/",
-      data
-    )
-      .then(response => response.json())
-      .then(responseJson => {
-        console.log(responseJson);
-        Actions.home();
-      })
-      .catch(error => {
-        alert("HIBA");
-      });
+    if (this.state.desc == "") {
+      alert("Minden adatot tölts ki!");
+    } else {
+      let data = {
+        method: "POST",
+        body: "title=" + this.state.title + "&desc=" + this.state.desc,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        }
+      };
+      return fetch(
+        "https://iszosz.herokuapp.com/users/" + this.state.id + "/notes/",
+        data
+      )
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log(responseJson);
+          Actions.home();
+        })
+        .catch(error => {
+          alert("HIBA");
+        });
+    }
   };
 
   componentDidMount() {

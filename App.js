@@ -36,6 +36,9 @@ import regDone from "./scenes/regDone";
 import profile from "./scenes/profile";
 import jegyzet from "./scenes/jegyzet";
 import jegyzetReszletes from "./scenes/jegyzetReszletes";
+import productUpload from "./scenes/productUpload";
+import productReszletes from "./scenes/productReszletes";
+import productUpdate from "./scenes/productUpdate";
 
 export default class Flux extends Component {
   constructor(props) {
@@ -184,6 +187,21 @@ export default class Flux extends Component {
             <Scene key="reg" component={reg} title="reg" />
             <Scene key="regDone" component={regDone} title="regDone" />
             <Scene key="jegyzet" component={jegyzet} title="jegyzet" />
+            <Scene
+              key="productUpload"
+              component={productUpload}
+              title="productUpload"
+            />
+            <Scene
+              key="productUpdate"
+              component={productUpdate}
+              title="productUpdate"
+            />
+            <Scene
+              key="productReszletes"
+              component={productReszletes}
+              title="productReszletes"
+            />
             <Scene
               key="jegyzetReszletes"
               component={jegyzetReszletes}

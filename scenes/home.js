@@ -23,6 +23,8 @@ import {
   ViewPagerAndroid
 } from "react-native";
 
+import OneSignal from "react-native-onesignal"; // Import package from node modules
+
 import { Router, Scene, Actions } from "react-native-router-flux";
 import api from "../utilities/api";
 import * as Keychain from "react-native-keychain";
@@ -56,7 +58,9 @@ export default class Home extends Component<{}> {
       canavasOpen: this.props.canavasOpen,
       token: "",
       tabbar: "left",
+      oldal: this.props.oldal,
       lista: [],
+      reg: this.props.reg,
       products: []
     };
     this.dataSource = new ListView.DataSource({
@@ -66,25 +70,45 @@ export default class Home extends Component<{}> {
   }
 
   getProducts() {
-    console.log(this.state.token);
-    let data = {
-      method: "GET",
-      headers: {
-        Authorization: this.state.token
-      }
-    };
-    return fetch("https://iszosz.herokuapp.com/products", data)
-      .then(notes => notes.json())
-      .then(products => {
-        this.setState({
-          products: products
+    if (this.state.reg == "jaja") {
+      console.log(this.state.token);
+      let data = {
+        method: "GET",
+        headers: {}
+      };
+      return fetch("https://iszosz.herokuapp.com/products", data)
+        .then(notes => notes.json())
+        .then(products => {
+          this.setState({
+            products: products.reverse()
+          });
+          console.log(this.state.products);
+        })
+        .catch(error => {
+          Actions.login();
+          Alert.alert("Hiba történt!", "Jelentkezz be újra");
         });
-        console.log(this.state.products);
-      })
-      .catch(error => {
-        Actions.login();
-        Alert.alert("Hiba történt!", "Jelentkezz be újra");
-      });
+    } else {
+      console.log(this.state.token);
+      let data = {
+        method: "GET",
+        headers: {
+          Authorization: this.state.token
+        }
+      };
+      return fetch("https://iszosz.herokuapp.com/products", data)
+        .then(notes => notes.json())
+        .then(products => {
+          this.setState({
+            products: products.reverse()
+          });
+          console.log(this.state.products);
+        })
+        .catch(error => {
+          Actions.login();
+          Alert.alert("Hiba történt!", "Jelentkezz be újra");
+        });
+    }
   }
 
   _storeData = async () => {
@@ -138,6 +162,11 @@ export default class Home extends Component<{}> {
       return fetch("https://iszosz.herokuapp.com/notes", data)
         .then(notes => notes.json())
         .then(lista => {
+          if (lista.hasOwnProperty("error")) {
+            AsyncStorage.setItem("@eterkep:userData", "");
+
+            Actions.login();
+          }
           this.setState({
             lista: lista.reverse()
           });
@@ -145,17 +174,49 @@ export default class Home extends Component<{}> {
         })
         .catch(error => {
           Actions.login();
+          AsyncStorage.setItem("@eterkep:userData", "");
+
           Alert.alert("Hiba történt!", "Jelentkezz be újra");
         });
     }, 200);
   }
 
   componentWillMount() {
+    if (this.state.oldal == "right") {
+      this.setState({ tabbar: "right" });
+      setTimeout(() => {
+        this.getProducts();
+      }, 500);
+    }
+    OneSignal.init("5536a6e1-908a-46d9-946f-aad787c376aa");
+    OneSignal.addEventListener("received", this.onReceived);
+    OneSignal.addEventListener("opened", this.onOpened);
+    OneSignal.addEventListener("ids", this.onIds);
     console.log(this.state);
     console.log(this.state.canavasOpen);
     if (this.state.canavasOpen === 1) {
       this.props.handleMenu();
     }
+  }
+  componentWillUnmount() {
+    OneSignal.removeEventListener("received", this.onReceived);
+    OneSignal.removeEventListener("opened", this.onOpened);
+    OneSignal.removeEventListener("ids", this.onIds);
+  }
+
+  onReceived(notification) {
+    console.log("Notification received: ", notification);
+  }
+
+  onOpened(openResult) {
+    console.log("Message: ", openResult.notification.payload.body);
+    console.log("Data: ", openResult.notification.payload.additionalData);
+    console.log("isActive: ", openResult.notification.isAppInFocus);
+    console.log("openResult: ", openResult);
+  }
+
+  onIds(device) {
+    console.log("Device info: ", device);
   }
   _handleResults(results) {
     //this.setState({ results });
@@ -186,8 +247,7 @@ export default class Home extends Component<{}> {
           style={{
             flex: 1,
             flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center"
+            justifyContent: "center"
           }}
         >
           <ScrollView
@@ -234,7 +294,7 @@ export default class Home extends Component<{}> {
                             borderRadius: 30
                           }}
                           source={{
-                            uri: rowData.userImageUrl
+                            uri: rowData.owner.imageURL
                           }}
                         />
                         <Text
@@ -251,7 +311,7 @@ export default class Home extends Component<{}> {
                             }
                           ]}
                         >
-                          {rowData.userName}
+                          {rowData.owner.name}
                         </Text>
                       </View>
 
@@ -298,8 +358,7 @@ export default class Home extends Component<{}> {
           style={{
             flex: 1,
             flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center"
+            justifyContent: "center"
           }}
         >
           <ScrollView
@@ -342,7 +401,7 @@ export default class Home extends Component<{}> {
                   <View style={{ marginTop: 10 }}>
                     <TouchableOpacity
                       onPress={() => {
-                        alert("megnyomtad");
+                        Actions.productReszletes({ info: rowData });
                       }}
                     >
                       <View
@@ -421,7 +480,7 @@ export default class Home extends Component<{}> {
                               }
                             ]}
                           >
-                            {rowData.userName}
+                            {rowData.owner.name}
                           </Text>
                         </View>
                       </View>
@@ -536,7 +595,7 @@ export default class Home extends Component<{}> {
 
               <TouchableOpacity
                 onPress={() => {
-                  Actions.jegyzet({
+                  Actions.productUpload({
                     id: this.state.id,
                     token: this.state.token
                   });

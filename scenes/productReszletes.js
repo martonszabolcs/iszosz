@@ -40,8 +40,8 @@ export default class NotesZoom extends Component<{}> {
       title: this.props.title,
       content: this.props.content,
       id: this.props.id,
-      note: this.props.note,
-      user: this.props.note.owner
+      note: this.props.info,
+      user: this.props.info.owner
     };
     console.log(this.state.id);
     this._storeData();
@@ -73,19 +73,19 @@ export default class NotesZoom extends Component<{}> {
     return fetch(
       "https://iszosz.herokuapp.com/users/" +
         this.state.id +
-        "/notes/" +
+        "/product/" +
         this.state.note.id,
       data
     )
       .then(response => response.json())
       .then(responseJson => {
         console.log(responseJson);
-        Actions.home();
+        Actions.home({ oldal: "right" });
       })
       .catch(error => {
         console.log(error);
 
-        Actions.home();
+        Actions.home({ oldal: "right" });
       });
   }
 
@@ -94,23 +94,48 @@ export default class NotesZoom extends Component<{}> {
     console.log(this.state.userName);
     if (this.state.user.id == this.state.id) {
       return (
-        <TouchableOpacity onPress={() => this.deleteApi()}>
-          <View
-            style={{
-              height: 40,
-              backgroundColor: "white",
-              width: width - 40,
-              borderColor: "#914646",
-              borderRadius: 10,
-              borderWidth: 1,
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: 20
-            }}
+        <View>
+          <TouchableOpacity
+            onPress={() => Actions.productUpdate({ data: this.state.note })}
           >
-            <Text style={{ color: "#914646" }}>{"Jegyzet törlése!"}</Text>
-          </View>
-        </TouchableOpacity>
+            <View
+              style={{
+                height: 40,
+                backgroundColor: "white",
+                width: width - 40,
+                borderColor: "#309272",
+                borderRadius: 10,
+                borderWidth: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 20
+              }}
+            >
+              <Text style={{ color: "#309272" }}>
+                {"Erőforrás szerkesztése"}
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => this.deleteApi()}>
+            <View
+              style={{
+                height: 40,
+                backgroundColor: "white",
+                width: width - 40,
+                borderColor: "#914646",
+                borderRadius: 10,
+                borderWidth: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 20,
+                marginBottom: 50,
+                marginTop: 20
+              }}
+            >
+              <Text style={{ color: "#914646" }}>{"Erőforrás törlése"}</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       );
     }
   }
@@ -132,6 +157,13 @@ export default class NotesZoom extends Component<{}> {
     let { fadeAnim } = this.state;
     var iWidth = width / 240;
     console.log(this.state.material);
+    if (this.state.note.available) {
+      var onSwitch = "#52D468";
+      var onSwitchText = "Elérhető";
+    } else {
+      var onSwitch = "#914646";
+      var onSwitchText = "Jelenleg foglalt";
+    }
 
     return (
       <View style={styles.container}>
@@ -147,7 +179,9 @@ export default class NotesZoom extends Component<{}> {
                 justifyContent: "space-between"
               }}
             >
-              <TouchableOpacity onPress={() => Actions.home()}>
+              <TouchableOpacity
+                onPress={() => Actions.home({ oldal: "right" })}
+              >
                 <View
                   style={{
                     marginLeft: 20,
@@ -185,7 +219,7 @@ export default class NotesZoom extends Component<{}> {
                     numberOfLines={1}
                     style={{ color: "black", fontSize: 20 }}
                   >
-                    {"Faliújság"}
+                    {this.state.note.title}
                   </Text>
                 </View>
               </Animated.View>
@@ -221,8 +255,8 @@ export default class NotesZoom extends Component<{}> {
                 <Image
                   source={{ uri: this.state.user.imageURL }}
                   style={{
-                    width: width / 3,
-                    height: width / 3,
+                    width: width / 5,
+                    height: width / 5,
                     borderRadius: 30
                   }}
                 />
@@ -238,11 +272,50 @@ export default class NotesZoom extends Component<{}> {
                   <Text
                     style={{ fontSize: 20, textAlign: "center", color: "gray" }}
                   >
+                    {"Hirdető"}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      textAlign: "center",
+                      color: "black"
+                    }}
+                  >
                     {this.state.user.name}
                   </Text>
                 </View>
               </View>
-              <View>
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginTop: 20
+                }}
+              >
+                <Image
+                  source={{ uri: this.state.note.imageURL }}
+                  style={{
+                    width: width - 80,
+                    height: width - 80,
+                    borderRadius: 30
+                  }}
+                />
+                <View
+                  style={{
+                    flexDirection: "row",
+                    marginTop: 20,
+                    backgroundColor: onSwitch,
+                    padding: 10,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: 10,
+                    width: width * 0.7
+                  }}
+                >
+                  <Text style={{ fontSize: 16, color: "white" }}>
+                    {onSwitchText}
+                  </Text>
+                </View>
                 <View
                   style={{
                     height: width * 0.7,

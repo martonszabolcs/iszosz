@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
   menu: {
     position: "absolute",
     bottom: 0,
-    backgroundColor: "transparent",
+    backgroundColor: "white",
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center"

@@ -62,66 +62,76 @@ export default class Login extends Component<{}> {
   }
 
   reg = async () => {
-    this.setState({ indicator: true });
-    var dataString =
-      "email=" +
-      this.state.email +
-      "&password=" +
-      this.state.password +
-      "&name=" +
-      this.state.name +
-      "&city=" +
-      this.state.city +
-      "&organization=" +
-      this.state.organization +
-      "&specialization=" +
-      this.state.specialization +
-      "&education=" +
-      this.state.education +
-      "&description=" +
-      this.state.description +
-      "&petName=" +
-      this.state.petName;
-    let data = {
-      method: "POST",
-      body: JSON.stringify({
-        password: this.state.password,
-        email: this.state.email,
-        name: this.state.name,
-        city: this.state.city,
-        organization: this.state.organization,
-        specialization: this.state.specialization,
-        education: this.state.education,
-        description: this.state.description,
-        keywords: this.state.selectedItems,
-        petName: this.state.petName
-      }),
-      body: dataString,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      }
-    };
-    return fetch("https://iszosz.herokuapp.com/registration", data)
-      .then(response => response.json())
-      .then(responseJson => {
-        console.log(responseJson);
-        if (responseJson.hasOwnProperty("error")) {
+    if (
+      this.state.password == "" ||
+      this.state.email == "" ||
+      this.state.name == "" ||
+      this.state.petName == "" ||
+      this.state.organization == "" ||
+      this.state.specialization == "" ||
+      this.state.city == "" ||
+      this.state.imagePath == ""
+    ) {
+      alert("Kérlek minden adatot tölts ki, valamint válassz egy képet!");
+    } else {
+      this.setState({ indicator: true });
+      var dataString =
+        "email=" +
+        this.state.email +
+        "&password=" +
+        this.state.password +
+        "&name=" +
+        this.state.name +
+        "&city=" +
+        this.state.city +
+        "&organization=" +
+        this.state.organization +
+        "&specialization=" +
+        this.state.specialization +
+        "&education=" +
+        this.state.education +
+        "&description=" +
+        this.state.description +
+        "&petName=" +
+        this.state.petName;
+      let data = {
+        method: "POST",
+        body: JSON.stringify({
+          password: this.state.password,
+          email: this.state.email,
+          name: this.state.name,
+          city: this.state.city,
+          organization: this.state.organization,
+          specialization: this.state.specialization,
+          education: this.state.education,
+          description: this.state.description,
+          petName: this.state.petName
+        }),
+        body: dataString,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        }
+      };
+      return fetch("https://iszosz.herokuapp.com/registration", data)
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log(responseJson);
+          if (responseJson.hasOwnProperty("error")) {
+            this.setState({ indicator: false });
+
+            alert(responseJson.message);
+          } else {
+            this.setState({ id: responseJson.id });
+            this.uploadPhoto();
+          }
+        })
+        .catch(error => {
           this.setState({ indicator: false });
 
-          alert(responseJson.message);
-        } else {
-          this.setState({ id: responseJson.id });
-          this.uploadPhoto();
-        }
-      })
-      .catch(error => {
-        this.setState({ indicator: false });
-
-        console.log(error);
-        alert(
-          "Kérlek töltsd ki az összes adatot, ha úgy sem jó akkor az e-mail cim foglalt"
-        );
-      });
+          console.log(error);
+          alert("Hiba");
+        });
+    }
   };
 
   async uploadPhoto() {
@@ -146,7 +156,7 @@ export default class Login extends Component<{}> {
           this.setState({ indicator: false });
         } else {
           this.setState({ indicator: false });
-          alert("Sikeres regisztráció!");
+          Alert("Sikeres regisztráció!", "");
           Actions.login();
         }
       });
@@ -197,7 +207,7 @@ export default class Login extends Component<{}> {
       return (
         <Image
           source={{ uri: this.state.imagePath }}
-          style={{ width: 300, height: 300, margin: 20, borderRadius: 30 }}
+          style={{ width: 300, height: 300, margin: 20, borderRadius: 20 }}
         />
       );
     }
